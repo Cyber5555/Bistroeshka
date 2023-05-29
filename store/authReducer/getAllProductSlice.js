@@ -1,31 +1,32 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import axios from 'axios';
-import {API_URL} from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const getAllProductRequest = createAsyncThunk(
-  'all_products',
-  async (data, {rejectWithValue}) => {
-    const token = await AsyncStorage.getItem('userToken');
+  "all_products",
+  async (data, { rejectWithValue }) => {
+    const token = await AsyncStorage.getItem("userToken");
     console.log(data);
     try {
       const config = {
-        headers: {Authorization: 'Bearer ' + token || data.token},
+        headers: { Authorization: "Bearer " + token || data.token },
+        method: "post",
       };
-      const response = await axios.post(
+      const response = await axios(
         `${API_URL}/api/get_category?page=${data.page}`,
         config,
         data,
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data, 'error.response.data');
+      return rejectWithValue(error.response.data, "error.response.data");
     }
   },
 );
 
 const getAllProductSlice = createSlice({
-  name: 'all_products',
+  name: "all_products",
   initialState: {
     all_product_data: [],
     current_page: 1,
@@ -48,7 +49,7 @@ const getAllProductSlice = createSlice({
       .addCase(getAllProductRequest.fulfilled, (state, action) => {
         // if (action.payload?.products?.data?.length) {
         state.loading = false;
-
+        console.log(action.payload?.products?.data);
         if (!state.stop_paginate) {
           state.all_product_data = [
             ...state.all_product_data,
@@ -86,4 +87,4 @@ const getAllProductSlice = createSlice({
   },
 });
 export default getAllProductSlice.reducer;
-export const {clearPagination} = getAllProductSlice.actions;
+export const { clearPagination } = getAllProductSlice.actions;

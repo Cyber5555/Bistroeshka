@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Catalog from '../src/authScreens/Catalog';
+import React, { useEffect, useState } from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Catalog from "../src/authScreens/Catalog";
 import {
   ActiveFavoriteIcon,
   ActiveProfileIcon,
@@ -10,22 +10,22 @@ import {
   CatalogIcon,
   FavoriteIcon,
   ProfileIcon,
-} from '../components/icons/includeSvg';
-import {createStackNavigator} from '@react-navigation/stack';
-import SinglePage from '../src/authScreens/SinglePage';
-import Favorites from '../src/authScreens/Favorites';
-import BegPage from '../src/authScreens/BegPage';
-import ProfilePage from '../src/authScreens/ProfilePage';
-import NotAuthNavigators from './notAuthNavigators';
-import ShopHistory from '../src/authScreens/ShopHistory';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import LoginOrRegister from '../src/notAuthScreens/LoginOrRegister';
+} from "../components/icons/includeSvg";
+import { createStackNavigator } from "@react-navigation/stack";
+import SinglePage from "../src/authScreens/SinglePage";
+import Favorites from "../src/authScreens/Favorites";
+import BegPage from "../src/authScreens/BegPage";
+import ProfilePage from "../src/authScreens/ProfilePage";
+import NotAuthNavigators from "./notAuthNavigators";
+import ShopHistory from "../src/authScreens/ShopHistory";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import LoginOrRegister from "../src/notAuthScreens/LoginOrRegister";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-export default TabNavigation = ({route}) => {
+export default TabNavigation = ({ route }) => {
   // const navigation = useNavigation();
   // const routes = navigation.getState()?.routes;
   // const prevRoute = routes[routes.length - 1];
@@ -33,7 +33,7 @@ export default TabNavigation = ({route}) => {
   const [token, setToken] = useState(null);
 
   useEffect(() => {
-    AsyncStorage.getItem('userToken').then(userToken => {
+    AsyncStorage.getItem("userToken").then(userToken => {
       setToken(userToken);
     });
   }, []);
@@ -42,61 +42,61 @@ export default TabNavigation = ({route}) => {
     <Tab.Navigator
       // initialRouteName="CatalogStack"
       backBehavior="history"
-      screenOptions={({route}) => ({
+      screenOptions={({ route }) => ({
         headerShown: false,
         tabBarHideOnKeyboard: true,
-        tabBarActiveTintColor: '#DDAC5F',
-        tabBarInactiveTintColor: '#662916',
+        tabBarActiveTintColor: "#DDAC5F",
+        tabBarInactiveTintColor: "#662916",
         tabBarLabelStyle: {
-          fontFamily: 'Montserrat-Regular',
+          fontFamily: "Montserrat-Regular",
           marginTop: -20,
           marginBottom: 20,
           fontSize: 10,
         },
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: "#FFFFFF",
           borderTopWidth: 1,
           height: 80,
-          borderColor: '#EDEAE4',
+          borderColor: "#EDEAE4",
         },
       })}>
       <Tab.Screen
         name="CatalogStack"
         component={CatalogStack}
-        options={({focused}) => ({
-          tabBarLabel: 'Каталог',
-          tabBarIcon: ({focused}) => {
+        options={{
+          tabBarLabel: "Каталог",
+          tabBarIcon: ({ focused }) => {
             return <CatalogIcons focused={focused} />;
           },
-        })}
+        }}
       />
       <Tab.Screen
         name="BegsStack"
-        component={BegsStack}
+        component={token ? BegsStack : LoginOrRegister}
         options={{
-          tabBarLabel: 'Корзина',
-          tabBarIcon: ({focused}) => {
+          tabBarLabel: "Корзина",
+          tabBarIcon: ({ focused }) => {
             return <BegIcons focused={focused} />;
           },
         }}
       />
       <Tab.Screen
         name="FavoritesStack"
-        component={FavoritesStack}
+        component={token ? FavoritesStack : LoginOrRegister}
         options={{
-          tabBarLabel: 'Избранные',
-          tabBarIcon: ({focused}) => {
+          tabBarLabel: "Избранные",
+          tabBarIcon: ({ focused }) => {
             return <FavoriteIcons focused={focused} />;
           },
         }}
       />
 
       <Tab.Screen
-        name={token ? 'ProfileStack' : 'LoginOrRegister'}
+        name={"ProfileStack"}
         component={token ? ProfileStack : LoginOrRegister}
         options={{
-          tabBarLabel: 'Профиль',
-          tabBarIcon: ({focused}) => {
+          tabBarLabel: "Профиль",
+          tabBarIcon: ({ focused }) => {
             return <ProfileIcons focused={focused} />;
           },
         }}
@@ -106,29 +106,29 @@ export default TabNavigation = ({route}) => {
         name="SinglePage"
         component={SinglePage}
         options={{
-          tabBarItemStyle: {display: 'none'},
+          tabBarItemStyle: { display: "none" },
         }}
       />
     </Tab.Navigator>
   );
 };
 
-const ProfileIcons = ({focused}) => {
+const ProfileIcons = ({ focused }) => {
   return focused ? <ActiveProfileIcon /> : <ProfileIcon />;
 };
-const FavoriteIcons = ({focused}) => {
+const FavoriteIcons = ({ focused }) => {
   return focused ? <ActiveFavoriteIcon /> : <FavoriteIcon />;
 };
-const BegIcons = ({focused}) => {
+const BegIcons = ({ focused }) => {
   return focused ? <BegActive /> : <BegNoActive />;
 };
-const CatalogIcons = ({focused}) => {
+const CatalogIcons = ({ focused }) => {
   return focused ? <CatalogActive /> : <CatalogIcon />;
 };
 
 const CatalogStack = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Catalog" component={Catalog} />
     </Stack.Navigator>
   );
@@ -136,7 +136,7 @@ const CatalogStack = () => {
 
 const FavoritesStack = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Favorites" component={Favorites} />
     </Stack.Navigator>
   );
@@ -144,7 +144,7 @@ const FavoritesStack = () => {
 
 const BegsStack = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="BegPage" component={BegPage} />
     </Stack.Navigator>
   );
@@ -152,7 +152,7 @@ const BegsStack = () => {
 
 const ProfileStack = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="ProfilePage" component={ProfilePage} />
       <Stack.Screen name="ShopHistory" component={ShopHistory} />
     </Stack.Navigator>
