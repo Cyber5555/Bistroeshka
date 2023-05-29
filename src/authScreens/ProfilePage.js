@@ -214,8 +214,8 @@ export default ProfilePage = ({}) => {
           <BigButton
             buttonText={'Выйти'}
             navigation={async () => {
-              await AsyncStorage.clear();
-              await RNRestart.Restart();
+              // await AsyncStorage.clear();
+              // await RNRestart.Restart();
             }}
           />
         </View>

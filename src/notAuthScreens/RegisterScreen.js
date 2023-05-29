@@ -109,7 +109,6 @@ export default RegisterScreen = ({route}) => {
           keyboardType={'phone-pad'}
           propsStyle={styles.firstInput}
           onChangeText={value => {
-            console.log(value);
 
             setPhone(value);
             setPhoneError('');

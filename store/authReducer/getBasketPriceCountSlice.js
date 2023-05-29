@@ -15,10 +15,8 @@ export const getBasketPriceCountRequest = createAsyncThunk(
         `${API_URL}/api/basket_all_price_and_count`,
         config,
       );
-      console.log(response.data, 'response.data');
       return response.data;
     } catch (error) {
-      console.log(error.response.data, 'error.response.data');
       return rejectWithValue(error.response.data);
     }
   },

@@ -17,10 +17,8 @@ export const plusMinusBasketRequest = createAsyncThunk(
         `${API_URL}/api/change_product_count_in_basket`,
         config,
       );
-      console.log(response.data, 'response.data');
       return response.data;
     } catch (error) {
-      console.log(error.response.data, 'error.response.data plus minus');
       return rejectWithValue(error.response.data);
     }
   },

@@ -95,7 +95,7 @@ export default BegPage = ({}) => {
               buttonText={'Оформить заказ'}
               navigation={() => {
                 dispatch(buyProductsRequest({})).then(res => {
-                  console.log(res.payload);
+                  // console.log(res.payload);
                   if (res.payload?.status) {
                     dispatch(getBasketPriceCountRequest(token));
                     setModalVisible(true);

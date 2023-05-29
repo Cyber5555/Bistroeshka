@@ -11,19 +11,7 @@ import SplashScreen from 'react-native-splash-screen';
 
 const Stack = createStackNavigator();
 const App = () => {
-  const [isAuth, setIsAuth] = useState(true);
-  // const state = useSelector(state => state);
-  // const {success_login} = state.loginSlice;
-
   useEffect(() => {
-    // AsyncStorage.getItem('userToken').then(userToken => {
-    //   if (userToken) {
-    //     setIsAuth(true);
-    //   } else {
-    //     setIsAuth(false);
-    //   }
-    // });
-    // AsyncStorage.clear();
     SplashScreen.hide();
   }, []);
 
@@ -36,16 +24,14 @@ const App = () => {
           barStyle={'dark-content'}
         />
         <Stack.Navigator
-          initialRouteName="NotAuthNavigators"
+          initialRouteName="TabNavigation"
           screenOptions={{headerShown: false}}>
           <Stack.Screen
             name="NotAuthNavigators"
             component={NotAuthNavigators}
           />
-
           <Stack.Screen name="TabNavigation" component={TabNavigation} />
         </Stack.Navigator>
-        {/* {isAuth ? < /> : < />} */}
       </NavigationContainer>
     </Provider>
   );

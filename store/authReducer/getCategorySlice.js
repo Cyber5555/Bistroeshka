@@ -1,13 +1,16 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {API_URL} from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const getCategoryRequest = createAsyncThunk(
   'sub_category',
-  async (token, {rejectWithValue}) => {
+  async ({rejectWithValue}) => {
+    const token = await AsyncStorage.getItem('userToken');
     try {
-      const response = await axios.post(`${API_URL}/api/get_category`);
-
+      const response = await axios.post(`${API_URL}/api/get_category`, {
+        headers: {Authorization: 'Bearer ' + token},
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

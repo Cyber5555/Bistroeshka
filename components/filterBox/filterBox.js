@@ -16,6 +16,7 @@ import {
   OpenDropdown,
 } from '../icons/includeSvg';
 import {Dropdown} from 'react-native-element-dropdown';
+
 const {width, height} = Dimensions.get('window');
 const data = [
   {label: 'Item 1', value: '1'},
@@ -161,7 +162,6 @@ const styles = StyleSheet.create({
   },
   inputsParent: {
     flex: 1,
-    backgroundColor: 'red',
     justifyContent: 'space-between',
     backgroundColor: '#F7F7F7',
     borderRadius: 10,

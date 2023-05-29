@@ -33,88 +33,107 @@ export default Catalog = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const state = useSelector(state => state);
-  const {category_data, first_id, loading_category} = state.getCategorySlice;
+  const {category_data, loading_category} = state.getCategorySlice;
   const {all_product_data, current_page, loading, stop_paginate} =
     state.getAllProductSlice;
   const {success_favorite} = state.addFavoriteSlice;
-  const [item_id, setItemId] = useState(first_id ? first_id : null);
+  const [item_id, setItemId] = useState();
   const [refresh, setRefresh] = useState(false);
   const [token, setToken] = useState(null);
   const [selectedFavorite, setSelectFavorite] = useState([]);
   const [selectedBasket, setSelectBasket] = useState([]);
+  const [price_min, setPriceMin] = useState('');
+  const [price_max, setPriceMax] = useState('');
 
   useEffect(() => {
-    AsyncStorage.getItem('userToken').then(userToken => {
-      setToken(userToken);
-    });
     const isFocus = navigation.addListener('focus', async () => {
-      await dispatch(clearPagination());
-      await dispatch(getCategoryRequest({}));
+      dispatch(clearPagination());
+      AsyncStorage.getItem('userToken').then(userToken => {
+        setToken(userToken);
+        console.log(userToken);
+        dispatch(getCategoryRequest({})).then(res => {
+          if (res.payload.status) {
+            setItemId(res.payload.category[0].id);
+            dispatch(
+              getAllProductRequest({
+                min_price: price_min,
+                max_price: price_max,
+                category_id: res.payload.category[0].id,
+                page: 1,
+                token: token,
+              }),
+            );
+          }
+        });
+      });
     });
 
     return isFocus;
   }, [navigation]);
 
   useEffect(() => {
-    setItemId(first_id);
     setActive(0);
-  }, [loading_category, first_id]);
-
-  useEffect(() => {
-    dispatch(getAllProductRequest({id: item_id, page: current_page}));
-  }, [item_id]);
+  }, [loading_category]);
 
   const handleLoadMore = () => {
     if (!stop_paginate && !loading) {
-      changeCategory(item_id);
+      if (item_id != null && item_id != undefined) {
+        dispatch(
+          getAllProductRequest({
+            min_price: price_min,
+            max_price: price_max,
+            category_id: item_id,
+            page: current_page,
+            token: token,
+          }),
+        );
+      }
       return false;
     }
   };
 
   useEffect(() => {
     callBackFunction();
-  }, [
-    category_data,
-    first_id,
-    loading_category,
-    all_product_data,
-    current_page,
-  ]);
+  }, [category_data, loading_category, all_product_data, current_page]);
 
   const callBackFunction = () => {
-    let favorite = [];
-    let basket = [];
-    all_product_data.filter((item, index) => {
-      if (
-        item?.has_favorite[0]?.product_id != undefined &&
-        item?.has_favorite?.length > 0
-      ) {
-        favorite.push(Number(item?.has_favorite[0]?.product_id));
-      }
+    if (token) {
+      let favorite = [];
+      let basket = [];
+      all_product_data.filter((item, index) => {
+        if (
+          item?.has_favorite?.length > 0 &&
+          item?.has_favorite[0]?.product_id != undefined
+        ) {
+          favorite.push(Number(item?.has_favorite[0]?.product_id));
+        }
 
-      if (
-        item?.has_bascet[0]?.product_id != undefined &&
-        item?.has_bascet?.length > 0
-      ) {
-        basket.push(Number(item?.has_bascet[0]?.product_id));
-      }
-    });
-    setSelectFavorite(favorite);
-    setSelectBasket(basket);
+        if (
+          item?.has_bascet?.length > 0 &&
+          item?.has_bascet[0]?.product_id != undefined
+        ) {
+          basket.push(Number(item?.has_bascet[0]?.product_id));
+        }
+      });
+      setSelectFavorite(favorite);
+      setSelectBasket(basket);
+    }
   };
 
   const onRefresh = useCallback(() => {
     dispatch(clearPagination());
     if (!loading && refresh) {
-      dispatch(getAllProductRequest({id: item_id, page: current_page}));
+      dispatch(
+        getAllProductRequest({
+          min_price: price_min,
+          max_price: price_max,
+          category_id: item_id,
+          page: 1,
+          token: token,
+        }),
+      );
     }
   }, []);
-
-  const changeCategory = id => {
-    if (item_id != null && item_id != undefined) {
-      dispatch(getAllProductRequest({id: id, page: current_page}));
-    }
-  };
 
   const toggleFavorite = (item, index) => {
     dispatch(addFavoriteRequest(item.id));
@@ -154,7 +173,15 @@ export default Catalog = () => {
         isActive={async e => {
           await dispatch(clearPagination());
           await setItemId(item.id);
-          await changeCategory(item.id);
+          dispatch(
+            getAllProductRequest({
+              min_price: price_min,
+              max_price: price_max,
+              category_id: item.id,
+              page: 1,
+              token: token,
+            }),
+          );
           setActive(index);
         }}
         key={index}
@@ -170,8 +197,20 @@ export default Catalog = () => {
         add_remove_favorite={
           selectedFavorite.indexOf(item.id) > -1 ? true : false
         }
-        addBeg={() => toggleBasket(item, index)}
-        addFavorite={() => toggleFavorite(item, index)}
+        addBeg={() => {
+          if (token) {
+            toggleBasket(item, index);
+          } else {
+            navigation.navigate('LoginOrRegister');
+          }
+        }}
+        addFavorite={() => {
+          if (token) {
+            toggleFavorite(item, index);
+          } else {
+            navigation.navigate('LoginOrRegister');
+          }
+        }}
         navigation={() => {
           navigation.navigate('SinglePage', {
             parameter: item.id,

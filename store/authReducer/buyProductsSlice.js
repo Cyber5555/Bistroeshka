@@ -16,10 +16,8 @@ export const buyProductsRequest = createAsyncThunk(
     };
     try {
       const response = await axios(`${API_URL}/api/add_order`, config);
-      console.log(response.data, 'response.data');
       return response.data;
     } catch (error) {
-      console.log(error.response.data, 'error.response.data');
       return rejectWithValue(error.response.data);
     }
   },

@@ -6,17 +6,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const getAllProductRequest = createAsyncThunk(
   'all_products',
   async (data, {rejectWithValue}) => {
+    const token = await AsyncStorage.getItem('userToken');
+    console.log(data);
     try {
-      const token = await AsyncStorage.getItem('userToken');
       const config = {
-        headers: {Authorization: 'Bearer ' + token},
-        data: data,
+        headers: {Authorization: 'Bearer ' + token || data.token},
       };
       const response = await axios.post(
         `${API_URL}/api/get_category?page=${data.page}`,
         config,
+        data,
       );
-      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data, 'error.response.data');
@@ -55,7 +55,6 @@ const getAllProductSlice = createSlice({
             ...action.payload?.products?.data,
           ];
         }
-        console.log(action.payload?.products?.next_page_url);
         if (action.payload?.products?.next_page_url === null) {
           state.stop_paginate = true;
         } else if (action.payload?.products?.next_page_url !== null) {
