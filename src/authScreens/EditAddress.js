@@ -28,19 +28,19 @@ export default EditAddress = ({}) => {
   const dispatch = useDispatch();
   const state = useSelector(state => state);
   const {all_address_data, loading} = state.getAllAddressSlice;
-  const [address_list, setAddressList] = useState(
-    all_address_data.length > 0 ? all_address_data : [],
-  );
+  const [address_list, setAddressList] = useState([]);
+
   useEffect(() => {
     AsyncStorage.getItem('userToken').then(userToken => {
       setToken(userToken);
-      dispatch(getAllAddressRequest(userToken));
+      dispatch(getAllAddressRequest(userToken)).then(res => {
+        console.log(res.payload);
+        if (res.payload.status) {
+          setAddressList(res.payload.data);
+        }
+      });
     });
-  }, [navigation]);
-
-  useEffect(() => {
-    dispatch(getAllAddressRequest(token));
-  }, [token]);
+  }, [navigation, dispatch]);
 
   const addNewInput = productId => {
     // setAddressList(prevState => [...prevState, {address: '', id: id + 1}]);

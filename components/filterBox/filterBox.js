@@ -16,25 +16,26 @@ import {
   OpenDropdown,
 } from '../icons/includeSvg';
 import {Dropdown} from 'react-native-element-dropdown';
+import {BigButton} from '../buttons/bigButton';
 
 const {width, height} = Dimensions.get('window');
-const data = [
-  {label: 'Item 1', value: '1'},
-  {label: 'Item 2', value: '2'},
-  {label: 'Item 3', value: '3'},
-  {label: 'Item 4', value: '4'},
-  {label: 'Item 5', value: '5'},
-  {label: 'Item 6', value: '6'},
-  {label: 'Item 7', value: '7'},
-  {label: 'Item 8', value: '8'},
-];
 
-export default FilterBox = ({isOpen, setOpen}) => {
-  const [value, setValue] = useState(null);
+export const FilterBox = ({
+  isOpen,
+  setOpen,
+  category,
+  setMinPrice,
+  setMaxPrice,
+  minPrice,
+  maxPrice,
+  filter,
+  clear,
+  changeCategory,
+  itemId,
+}) => {
   const [isFocus, setIsFocus] = useState(false);
-  const [startPrice, setStartPrice] = useState(null);
   const renderLabel = () => {
-    if (value || isFocus) {
+    if (itemId || isFocus) {
       return (
         <Text style={[styles.label, isFocus && {color: 'blue'}]}>
           Dropdown label
@@ -74,14 +75,19 @@ export default FilterBox = ({isOpen, setOpen}) => {
                 <TextInput
                   style={styles.inputs}
                   keyboardType="number-pad"
-                  value={startPrice}
-                  // onChangeText={() => changeStartPrice()}
+                  value={minPrice}
+                  onChangeText={setMinPrice}
                 />
               </View>
               <View style={styles.line}></View>
               <View style={styles.inputsParent}>
                 <Text style={styles.otDo}>До</Text>
-                <TextInput style={styles.inputs} keyboardType="number-pad" />
+                <TextInput
+                  style={styles.inputs}
+                  keyboardType="number-pad"
+                  value={maxPrice}
+                  onChangeText={setMaxPrice}
+                />
               </View>
             </View>
 
@@ -93,7 +99,7 @@ export default FilterBox = ({isOpen, setOpen}) => {
               selectedTextStyle={styles.selectedTextStyle}
               itemTextStyle={styles.itemTextStyle}
               // iconStyle={styles.iconStyle}
-              data={data}
+              data={category}
               // search
               iconStyle={{
                 borderWidth: 1,
@@ -102,19 +108,29 @@ export default FilterBox = ({isOpen, setOpen}) => {
                 isFocus ? <CloseDropdown /> : <OpenDropdown />
               }
               maxHeight={300}
-              labelField="label"
-              valueField="value"
+              labelField="title"
+              valueField="id"
               placeholder={!isFocus ? 'Выберите категорию' : '...'}
               searchPlaceholder="Search..."
-              value={value}
+              value={itemId}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               onChange={item => {
-                setValue(item.value);
+                changeCategory(item.id);
                 setIsFocus(false);
               }}
               renderLeftIcon={null}
             />
+            <View style={styles.buttons}>
+              <BigButton buttonText={'Филтер'} navigation={filter} />
+              <BigButton
+                buttonText={'Сбросить'}
+                navigation={clear}
+                buttonStyle={{
+                  marginTop: 15,
+                }}
+              />
+            </View>
           </React.Fragment>
         </TouchableHighlight>
       </TouchableOpacity>
@@ -219,5 +235,10 @@ const styles = StyleSheet.create({
   },
   itemTextStyle: {
     color: TextColor,
+  },
+  buttons: {
+    position: 'absolute',
+    bottom: '20%',
+    alignSelf: 'center',
   },
 });

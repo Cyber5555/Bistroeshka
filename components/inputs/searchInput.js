@@ -1,18 +1,20 @@
 import React from 'react';
 import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {TextColor} from '../colors/colors';
-import {SearchIcon} from '../icons/includeSvg';
+import {SearchIcon, CloseSearch} from '../icons/includeSvg';
 
-export const SearchInput = ({}) => {
+export const SearchInput = ({value, setValue, search}) => {
   return (
     <View style={styles.parent}>
       <TextInput
         style={styles.input}
         placeholder="Поиск..."
         placeholderTextColor={TextColor}
+        value={value}
+        onChangeText={setValue}
       />
-      <TouchableOpacity style={styles.searchButton}>
-        <SearchIcon />
+      <TouchableOpacity style={styles.searchButton} onPress={search}>
+        {!value ? <SearchIcon /> : <CloseSearch />}
       </TouchableOpacity>
     </View>
   );

@@ -39,10 +39,11 @@ export {default as DelateToBeg} from '../../assets/Icons/delateToBeg.svg';
 
 export {default as HistoryIcon} from '../../assets/Icons/historyIcon.svg';
 
-
 export {default as EditIcon} from '../../assets/Icons/editIcon.svg';
 export {default as IsVerifyIcon} from '../../assets/Icons/isVerify.svg';
 export {default as ArrowRightIcon} from '../../assets/Icons/arrowRight.svg';
 
 export {default as OpenEye} from '../../assets/Icons/openEye.svg';
 export {default as CloseEye} from '../../assets/Icons/closeEye.svg';
+
+export {default as CloseSearch} from '../../assets/Icons/close.svg';
