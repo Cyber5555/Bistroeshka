@@ -1,7 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {TextColor} from '../colors/colors';
 import {DelateToBeg} from '../icons/includeSvg';
+import {API_URL} from '@env';
+import moment from 'moment/moment';
 
 export const ShopHistoryRenderedItems = ({
   image,
@@ -12,10 +14,12 @@ export const ShopHistoryRenderedItems = ({
   navigation,
   dateTime,
 }) => {
-  const [count, setCount] = useState(0);
   return (
     <TouchableOpacity style={styles.parent} onPress={navigation}>
-      <Image source={image} style={styles.image} />
+      <Image
+        source={{uri: `${API_URL}/uploads/${image}`}}
+        style={styles.image}
+      />
       <View style={styles.boxesParent}>
         <View style={styles.priceNameParent}>
           <Text style={styles.title}>{title}</Text>
@@ -28,7 +32,9 @@ export const ShopHistoryRenderedItems = ({
           {info}
         </Text>
         <View style={styles.buttonParent}>
-          <Text style={styles.dateTime}>{dateTime}</Text>
+          <Text style={styles.dateTime}>
+            {moment(dateTime).locale('Ru').format('DD MMMM YYYY')}
+          </Text>
           <TouchableOpacity>
             <DelateToBeg />
           </TouchableOpacity>
@@ -45,11 +51,13 @@ const styles = StyleSheet.create({
     marginVertical: 12,
   },
   image: {
-    width: '30%',
-    height: '100%',
+    width: 100,
+    height: 100,
+    borderRadius: 10,
   },
   boxesParent: {
-    width: '67%',
+    flex: 1,
+    justifyContent: 'space-between',
   },
   priceNameParent: {
     width: '100%',

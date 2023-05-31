@@ -7,12 +7,8 @@ export const getAllProductRequest = createAsyncThunk(
   'all_products',
   async (data, {rejectWithValue}) => {
     const token = await AsyncStorage.getItem('userToken');
-    console.log(data);
+    // console.log(data);
     try {
-      const config = {
-        headers: {Authorization: 'Bearer ' + token || data.token},
-        method: 'post',
-      };
       const response = await axios(
         `${API_URL}/api/get_category?page=${data.page}`,
         {

@@ -26,8 +26,8 @@ const getBasketPriceCountSlice = createSlice({
   name: 'plus_basket',
   initialState: {
     loading: false,
-    all_count: '',
-    all_price: '',
+    all_count: '0',
+    all_price: '0',
   },
   reducers: {},
   extraReducers: builder => {

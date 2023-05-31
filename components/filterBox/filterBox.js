@@ -111,7 +111,7 @@ export const FilterBox = ({
               labelField="title"
               valueField="id"
               placeholder={!isFocus ? 'Выберите категорию' : '...'}
-              searchPlaceholder="Search..."
+              // searchPlaceholder="Search..."
               value={itemId}
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}

@@ -37,14 +37,14 @@ export default ProfilePage = ({}) => {
   const [filePath, setFilePath] = useState();
 
   useEffect(() => {
-    const isFocus = navigation.addListener('focus', () => {
-      AsyncStorage.getItem('userToken').then(userToken => {
-        setToken(userToken);
-        dispatch(getAuthUserInfoRequest({token: userToken}));
-      });
+    // const isFocus = navigation.addListener('focus', () => {
+    AsyncStorage.getItem('userToken').then(userToken => {
+      setToken(userToken);
+      dispatch(getAuthUserInfoRequest({token: userToken}));
     });
+    // });
 
-    return () => isFocus();
+    // return () => isFocus();
   }, [navigation]);
 
   const chooseFile = () => {

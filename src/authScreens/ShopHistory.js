@@ -1,59 +1,56 @@
-import {useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import Wrapper from './../../components/fixedElements/Wrapper';
-import {Dimensions, FlatList, StyleSheet, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import SuccessModal from '../../components/modals/successModal';
 import {ShopHistoryRenderedItems} from '../../components/historyItems/historyItems';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  clearPagination,
+  getAllHistoryRequest,
+} from '../../store/authReducer/getAllHistorySlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {TextColor} from '../../components/colors/colors';
 
 const {width} = Dimensions.get('window');
-let data = [
-  {
-    image: require('../../assets/images/pica.png'),
-    title: 'ПЕПЕРОНИ',
-    price: 350,
-    gram: 800,
-    info: 'Пицца четвертинками с ветчиной, цыпленком, томатами, брынзой, моцареллой, фирменным соусом альфредо',
-  },
-  {
-    image: require('../../assets/images/pica.png'),
-    title: 'ПЕПЕРОНИ',
-    price: 350,
-    gram: 800,
-    info: 'Пицца четвертинками с ветчиной, цыпленком, томатами, брынзой, моцареллой, фирменным соусом альфредо',
-  },
-  {
-    image: require('../../assets/images/pica.png'),
-    title: 'ПЕПЕРОНИ',
-    price: 350,
-    gram: 800,
-    info: 'Пицца четвертинками с ветчиной, цыпленком, томатами, брынзой, моцареллой, фирменным соусом альфредо',
-  },
-  {
-    image: require('../../assets/images/pica.png'),
-    title: 'ПЕПЕРОНИ',
-    price: 350,
-    gram: 800,
-    info: 'Пицца четвертинками с ветчиной, цыпленком, томатами, брынзой, моцареллой, фирменным соусом альфредо',
-  },
-  {
-    image: require('../../assets/images/pica.png'),
-    title: 'ПЕПЕРОНИ',
-    price: 350,
-    gram: 800,
-    info: 'Пицца четвертинками с ветчиной, цыпленком, томатами, брынзой, моцареллой, фирменным соусом альфредо',
-  },
-  {
-    image: require('../../assets/images/pica.png'),
-    title: 'ПЕПЕРОНИ',
-    price: 350,
-    gram: 800,
-    info: 'Пицца четвертинками с ветчиной, цыпленком, томатами, брынзой, моцареллой, фирменным соусом альфредо',
-  },
-];
 
-export default BegPage = ({}) => {
-  const [modal_visible, setModalVisible] = useState(false);
+export default ShopHistory = ({}) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const state = useSelector(state1 => state1);
+  const {all_history, loading, stop_paginate, current_page} =
+    state.getAllHistorySlice;
+  const [token, setToken] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem('userToken').then(userToken => {
+      setToken(userToken);
+      dispatch(getAllHistoryRequest({token: token, page: current_page}));
+    });
+  }, [navigation]);
+
+  const onRefresh = useCallback(() => {
+    dispatch(clearPagination());
+    if (!loading && refresh) {
+      dispatch(getAllHistoryRequest({token: token, page: current_page}));
+    }
+  }, []);
+
+  const handleLoadMore = () => {
+    if (!stop_paginate && !loading) {
+      dispatch(getAllHistoryRequest({token: token, page: current_page}));
+      return false;
+    }
+  };
 
   const renderItem = ({item, index}) => {
     return (
@@ -61,14 +58,15 @@ export default BegPage = ({}) => {
         navigation={() =>
           navigation.navigate('SinglePage', {
             screen: 'SinglePage',
+            parameter: item.id,
           })
         }
-        image={item.image}
-        title={item.title}
-        price={item.price}
-        gram={item.gram}
-        info={item.info}
-        dateTime={'12 марта 2023'}
+        image={item?.get_product?.get_product_image[0]?.image}
+        title={item?.get_product?.title}
+        price={item?.get_product?.price}
+        gram={item?.get_product?.dimension}
+        info={item?.get_product?.description}
+        dateTime={item?.date}
       />
     );
   };
@@ -82,18 +80,37 @@ export default BegPage = ({}) => {
       styleProps={{marginBottom: 10}}
       goBack={() => navigation.goBack()}>
       <FlatList
-        data={data}
+        data={all_history}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         keyExtractor={(_, index) => index.toString()}
-      />
-      <SuccessModal
-        press={() => setModalVisible(false)}
-        visible={modal_visible}
-        successText={'Заказ успешно принят'}
-        buttonText={'В Каталог'}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={loading ? <ActivityIndicator size={50} /> : null}
+        refreshControl={
+          <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
+        }
+        ListEmptyComponent={() => {
+          if (!loading && !refresh) {
+            return (
+              <View style={styles.emptyParent}>
+                <Text style={styles.emptyText}>Нет продуктов</Text>
+              </View>
+            );
+          }
+        }}
       />
     </Wrapper>
   );
 };
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  emptyParent: {
+    flex: 1,
+    paddingTop: 50,
+  },
+  emptyText: {
+    fontSize: 20,
+    textAlign: 'center',
+    color: TextColor,
+  },
+});

@@ -3,7 +3,7 @@ import {StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 import {TextColor} from '../colors/colors';
 import {SearchIcon, CloseSearch} from '../icons/includeSvg';
 
-export const SearchInput = ({value, setValue, search}) => {
+export const SearchInput = ({value, setValue, search, searched}) => {
   return (
     <View style={styles.parent}>
       <TextInput
@@ -14,7 +14,7 @@ export const SearchInput = ({value, setValue, search}) => {
         onChangeText={setValue}
       />
       <TouchableOpacity style={styles.searchButton} onPress={search}>
-        {!value ? <SearchIcon /> : <CloseSearch />}
+        {searched ? <SearchIcon /> : <CloseSearch />}
       </TouchableOpacity>
     </View>
   );

@@ -34,7 +34,6 @@ export default EditAddress = ({}) => {
     AsyncStorage.getItem('userToken').then(userToken => {
       setToken(userToken);
       dispatch(getAllAddressRequest(userToken)).then(res => {
-        console.log(res.payload);
         if (res.payload.status) {
           setAddressList(res.payload.data);
         }

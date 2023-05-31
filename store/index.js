@@ -15,6 +15,7 @@ import getAllBasketSlice from './authReducer/getAllBasketSlice';
 import delateInBassketSlice from './authReducer/delateInBassketSlice';
 import plusMinusBasketSlice from './authReducer/plusMinusBasketSlice';
 import getBasketPriceCountSlice from './authReducer/getBasketPriceCountSlice';
+import getAllHistorySlice from './authReducer/getAllHistorySlice';
 
 const rootReducer = combineReducers({
   registerSlice: registerSlice,
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
   delateInBassketSlice: delateInBassketSlice,
   plusMinusBasketSlice: plusMinusBasketSlice,
   getBasketPriceCountSlice: getBasketPriceCountSlice,
+  getAllHistorySlice: getAllHistorySlice,
 });
 
 export const store = configureStore({

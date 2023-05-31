@@ -46,13 +46,13 @@ export default Catalog = () => {
   const [price_max, setPriceMax] = useState('');
   const [show_category, setShowCategory] = useState(true);
   const [search, setSearch] = useState('');
+  const [searched, setSearched] = useState(true);
 
   useEffect(() => {
     const isFocus = navigation.addListener('focus', async () => {
       dispatch(clearPagination());
       AsyncStorage.getItem('userToken').then(userToken => {
         setToken(userToken);
-        console.log(userToken);
         dispatch(getCategoryRequest({})).then(res => {
           if (res.payload.status) {
             setItemId(res.payload.category[0].id);
@@ -240,7 +240,10 @@ export default Catalog = () => {
       title={'Каталог'}
       leftIcon={false}
       rightIcon={true}
-      openFilter={() => setOpenFilter(true)}>
+      openFilter={() => {
+        setOpenFilter(true);
+        setItemId('');
+      }}>
       <FilterBox
         isOpen={open_filter}
         category={category_data}
@@ -254,7 +257,7 @@ export default Catalog = () => {
         filter={() => {
           dispatch(clearPagination());
           setShowCategory(false);
-          setItemId('');
+          setSearched(true);
           dispatch(
             getAllProductRequest({
               search: search,
@@ -267,10 +270,12 @@ export default Catalog = () => {
           );
         }}
         clear={() => {
+          setItemId('');
           dispatch(clearPagination());
           setPriceMax('');
           setPriceMin('');
           setShowCategory(true);
+          setSearched(true);
           dispatch(
             getAllProductRequest({
               search: search,
@@ -287,30 +292,51 @@ export default Catalog = () => {
         value={search}
         setValue={e => {
           setSearch(e);
-          dispatch(clearPagination());
-          setTimeout(() => {
-            dispatch(
-              getAllProductRequest({
-                search: e,
-                min_price: price_min,
-                max_price: price_max,
-                category_id: item_id,
-                page: 1,
-                token: token,
-              }),
-            );
-          }, 1000);
-        }}
-        search={() => {
-          dispatch(clearPagination());
-          if (search) {
-            setSearch('');
+          if (e == '') {
+            dispatch(clearPagination());
+            setShowCategory(true);
+            setSearched(true);
             dispatch(
               getAllProductRequest({
                 search: '',
                 min_price: price_min,
                 max_price: price_max,
-                category_id: item_id,
+                category_id: '',
+                page: 1,
+                token: token,
+              }),
+            );
+          } else {
+            setShowCategory(false);
+            setSearched(true);
+          }
+        }}
+        searched={searched}
+        search={() => {
+          dispatch(clearPagination());
+          if (searched && search) {
+            setShowCategory(false);
+            setSearched(false);
+            dispatch(
+              getAllProductRequest({
+                search: search,
+                min_price: price_min,
+                max_price: price_max,
+                category_id: '',
+                page: 1,
+                token: token,
+              }),
+            );
+          } else if (!searched && search) {
+            setSearch('');
+            setShowCategory(true);
+            setSearched(true);
+            dispatch(
+              getAllProductRequest({
+                search: '',
+                min_price: price_min,
+                max_price: price_max,
+                category_id: '',
                 page: 1,
                 token: token,
               }),
@@ -320,7 +346,7 @@ export default Catalog = () => {
       />
       <View style={styles.subCategoryParent}>
         <FlatList
-          data={show_category || search === '' ? category_data : []}
+          data={show_category ? category_data : []}
           horizontal
           keyExtractor={(_, index) => index.toString()}
           showsHorizontalScrollIndicator={false}

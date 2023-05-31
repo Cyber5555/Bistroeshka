@@ -7,6 +7,7 @@ export const getCategoryRequest = createAsyncThunk(
   'sub_category',
   async ({rejectWithValue}) => {
     const token = await AsyncStorage.getItem('userToken');
+    console.log(token);
     try {
       const response = await axios.post(`${API_URL}/api/get_category`, {
         headers: {Authorization: 'Bearer ' + token},
