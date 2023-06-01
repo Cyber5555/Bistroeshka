@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import Wrapper from './../../components/fixedElements/Wrapper';
+import React, { useCallback, useEffect, useState } from "react";
+import Wrapper from "./../../components/fixedElements/Wrapper";
 import {
   ActivityIndicator,
   Dimensions,
@@ -8,65 +8,77 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import SuccessModal from '../../components/modals/successModal';
-import {ShopHistoryRenderedItems} from '../../components/historyItems/historyItems';
-import {useDispatch, useSelector} from 'react-redux';
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import SuccessModal from "../../components/modals/successModal";
+import { ShopHistoryRenderedItems } from "../../components/historyItems/historyItems";
+import { useDispatch, useSelector } from "react-redux";
 import {
   clearPagination,
   getAllHistoryRequest,
-} from '../../store/authReducer/getAllHistorySlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {TextColor} from '../../components/colors/colors';
+} from "../../store/authReducer/getAllHistorySlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TextColor } from "../../components/colors/colors";
+import { deleteHistoryRequest } from "../../store/authReducer/deleteHistorySlice";
+import "moment/locale/ru";
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export default ShopHistory = ({}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const state = useSelector(state1 => state1);
-  const {all_history, loading, stop_paginate, current_page} =
+  const { all_history, loading, stop_paginate, current_page } =
     state.getAllHistorySlice;
+  const { success_delate } = state.deleteHistorySlice;
   const [token, setToken] = useState(null);
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    AsyncStorage.getItem('userToken').then(userToken => {
+    AsyncStorage.getItem("userToken").then(userToken => {
       setToken(userToken);
-      dispatch(getAllHistoryRequest({token: token, page: current_page}));
+      dispatch(getAllHistoryRequest({ token: userToken, page: current_page }));
     });
   }, [navigation]);
+
+  useEffect(() => {
+    dispatch(getAllHistoryRequest({ token: token, page: 1 }));
+  }, [success_delate]);
 
   const onRefresh = useCallback(() => {
     dispatch(clearPagination());
     if (!loading && refresh) {
-      dispatch(getAllHistoryRequest({token: token, page: current_page}));
+      dispatch(getAllHistoryRequest({ token: token, page: current_page }));
     }
   }, []);
 
   const handleLoadMore = () => {
     if (!stop_paginate && !loading) {
-      dispatch(getAllHistoryRequest({token: token, page: current_page}));
+      dispatch(getAllHistoryRequest({ token: token, page: current_page }));
       return false;
     }
   };
 
-  const renderItem = ({item, index}) => {
+  const renderItem = ({ item, index }) => {
     return (
       <ShopHistoryRenderedItems
-        navigation={() =>
-          navigation.navigate('SinglePage', {
-            screen: 'SinglePage',
-            parameter: item.id,
-          })
-        }
         image={item?.get_product?.get_product_image[0]?.image}
         title={item?.get_product?.title}
         price={item?.get_product?.price}
         gram={item?.get_product?.dimension}
         info={item?.get_product?.description}
         dateTime={item?.date}
+        navigation={() =>
+          navigation.navigate("SinglePage", {
+            screen: "SinglePage",
+            parameter: item.id,
+          })
+        }
+        deleteProduct={
+          () => {
+            dispatch(deleteHistoryRequest(item.id));
+          }
+        }
       />
     );
   };
@@ -75,9 +87,9 @@ export default ShopHistory = ({}) => {
     <Wrapper
       leftIcon={true}
       rightIcon={false}
-      title={'История покупок'}
+      title={"История покупок"}
       bottomLine={true}
-      styleProps={{marginBottom: 10}}
+      styleProps={{ marginBottom: 10 }}
       goBack={() => navigation.goBack()}>
       <FlatList
         data={all_history}
@@ -110,7 +122,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
     color: TextColor,
   },
 });

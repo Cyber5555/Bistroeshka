@@ -1,15 +1,16 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import axios from 'axios';
-import {API_URL} from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const getAllHistoryRequest = createAsyncThunk(
-  'get_history',
-  async (data, {rejectWithValue}) => {
+  "get_history",
+  async (data, { rejectWithValue }) => {
     // const token = await AsyncStorage.getItem('userToken');
+    console.log(data);
     try {
       const config = {
-        headers: {Authorization: 'Bearer ' + data.token},
+        headers: { Authorization: "Bearer " + data.token },
       };
       const response = await axios.get(
         `${API_URL}/api/get_orders?page=${data.page}`,
@@ -23,7 +24,7 @@ export const getAllHistoryRequest = createAsyncThunk(
 );
 
 const getAllHistorySlice = createSlice({
-  name: 'get_history',
+  name: "get_history",
   initialState: {
     loading: false,
     all_history: [],
@@ -46,7 +47,6 @@ const getAllHistorySlice = createSlice({
       .addCase(getAllHistoryRequest.fulfilled, (state, action) => {
         if (action.payload?.status) {
           state.loading = false;
-          state.all_history = action.payload?.data.data;
           if (!state.stop_paginate) {
             state.all_history = [
               ...state.all_history,
@@ -71,4 +71,4 @@ const getAllHistorySlice = createSlice({
 });
 
 export default getAllHistorySlice.reducer;
-export const {clearPagination} = getAllHistorySlice.actions;
+export const { clearPagination } = getAllHistorySlice.actions;

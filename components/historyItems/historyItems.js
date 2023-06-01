@@ -1,23 +1,24 @@
-import React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {TextColor} from '../colors/colors';
-import {DelateToBeg} from '../icons/includeSvg';
-import {API_URL} from '@env';
-import moment from 'moment/moment';
+import React from "react";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { TextColor } from "../colors/colors";
+import { DelateToBeg } from "../icons/includeSvg";
+import { API_URL } from "@env";
+import moment from "moment/moment";
 
 export const ShopHistoryRenderedItems = ({
-  image,
-  title,
-  price,
-  gram,
-  info,
-  navigation,
-  dateTime,
-}) => {
+                                           image,
+                                           title,
+                                           price,
+                                           gram,
+                                           info,
+                                           navigation,
+                                           dateTime,
+                                           deleteProduct,
+                                         }) => {
   return (
     <TouchableOpacity style={styles.parent} onPress={navigation}>
       <Image
-        source={{uri: `${API_URL}/uploads/${image}`}}
+        source={{ uri: `${API_URL}/uploads/${image}` }}
         style={styles.image}
       />
       <View style={styles.boxesParent}>
@@ -33,9 +34,9 @@ export const ShopHistoryRenderedItems = ({
         </Text>
         <View style={styles.buttonParent}>
           <Text style={styles.dateTime}>
-            {moment(dateTime).locale('Ru').format('DD MMMM YYYY')}
+            {moment(dateTime).locale("Ru").format("DD MMMM YYYY")}
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={deleteProduct}>
             <DelateToBeg />
           </TouchableOpacity>
         </View>
@@ -45,8 +46,8 @@ export const ShopHistoryRenderedItems = ({
 };
 const styles = StyleSheet.create({
   parent: {
-    width: '100%',
-    flexDirection: 'row',
+    width: "100%",
+    flexDirection: "row",
     columnGap: 10,
     marginVertical: 12,
   },
@@ -57,43 +58,43 @@ const styles = StyleSheet.create({
   },
   boxesParent: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
   priceNameParent: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   title: {
-    fontFamily: 'OpenSans-SemiBold',
+    fontFamily: "OpenSans-SemiBold",
     color: TextColor,
     fontSize: 14,
   },
   priceGramParent: {
-    flexDirection: 'row',
+    flexDirection: "row",
     columnGap: 5,
-    alignItems: 'center',
+    alignItems: "center",
   },
   gram: {
     fontSize: 13,
-    color: '#868686',
-    fontFamily: 'OpenSans-Regular',
+    color: "#868686",
+    fontFamily: "OpenSans-Regular",
   },
   info: {
-    color: '#545454',
+    color: "#545454",
     fontSize: 14,
     marginVertical: 2,
   },
   buttonParent: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginTop: 5,
   },
   dateTime: {
-    fontFamily: 'Montserrat-Regular',
-    color: '#545454',
+    fontFamily: "Montserrat-Regular",
+    color: "#545454",
   },
 });
