@@ -1,21 +1,17 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import { API_URL } from "@env";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import axios from 'axios';
+import {API_URL} from '@env';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const logoutRequest = createAsyncThunk(
-  "logout_user",
-  async (token, { rejectWithValue }) => {
+  'logout_user',
+  async (token, {rejectWithValue}) => {
     // const token = await AsyncStorage.getItem('userToken');
-
     try {
       const config = {
-        headers: { Authorization: "Bearer " + token },
+        headers: {Authorization: 'Bearer ' + token},
       };
-      const response = await axios.get(
-        `${API_URL}/api/logout`,
-        config,
-      );
+      const response = await axios.get(`${API_URL}/api/logout`, config);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -24,7 +20,7 @@ export const logoutRequest = createAsyncThunk(
 );
 
 const logoutSlice = createSlice({
-  name: "logout_user",
+  name: 'logout_user',
   initialState: {
     loading: false,
   },

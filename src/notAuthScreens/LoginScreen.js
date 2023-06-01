@@ -10,6 +10,7 @@ import {clearLoginState, loginRequest} from '../../store/reducer/loginSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import PhoneInput from './../../components/inputs/phoneInput';
 import RNRestart from 'react-native-restart';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default LoginScreen = ({}) => {
   const navigation = useNavigation();
@@ -31,18 +32,6 @@ export default LoginScreen = ({}) => {
       setPhone('');
     }
   }, [user_not_verify]);
-
-  useEffect(() => {
-    if (success_login) {
-      // RNRestart.Restart();
-      navigation.navigate(
-        'TabNavigation',
-        // {
-        //   screen: 'Catalog',
-        // }
-      );
-    }
-  }, [success_login]);
 
   return (
     <Wrapper leftIcon={true} goBack={() => navigation.goBack()}>
@@ -80,7 +69,13 @@ export default LoginScreen = ({}) => {
                 phone: phone,
                 password: password,
               }),
-            );
+            ).then(async login => {
+              await AsyncStorage.setItem('userToken', login.payload.token).then(
+                () => {
+                  navigation.navigate('Catalog');
+                },
+              );
+            });
           }}
         />
         <Text style={styles.haveAccount}>Нет аккаунта?</Text>

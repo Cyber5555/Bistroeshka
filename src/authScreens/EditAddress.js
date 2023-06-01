@@ -1,5 +1,6 @@
 import Wrapper from './../../components/fixedElements/Wrapper';
 import {
+  ActivityIndicator,
   Dimensions,
   FlatList,
   ScrollView,
@@ -140,7 +141,7 @@ export default EditAddress = ({}) => {
         // contentContainerStyle={{flexDirection: 'column-reverse'}}
         renderItem={renderItem}
         ListEmptyComponent={() => {
-          if (!loading) {
+          if (!loading || !address_list.length === 0) {
             return (
               <View style={styles.emptyParent}>
                 <Text style={styles.emptyText}>Нет продуктов</Text>
@@ -149,14 +150,18 @@ export default EditAddress = ({}) => {
           }
         }}
         ListFooterComponent={() => {
-          if (address_list) {
-            return (
-              <BigButton
-                buttonText={'Добавить'}
-                buttonStyle={{marginVertical: 80}}
-                navigation={() => addNewInput()}
-              />
-            );
+          if (!loading) {
+            if (address_list) {
+              return (
+                <BigButton
+                  buttonText={'Добавить'}
+                  buttonStyle={{marginVertical: 80}}
+                  navigation={() => addNewInput()}
+                />
+              );
+            }
+          } else {
+            return <ActivityIndicator color={'#BF8838'} size={50} />;
           }
         }}
       />

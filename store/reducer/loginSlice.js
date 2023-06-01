@@ -49,7 +49,7 @@ const loginSlice = createSlice({
         if (action.payload.status) {
           state.loading = false;
           state.success_login = true;
-          AsyncStorage.setItem('userToken', action.payload.token);
+          // AsyncStorage.setItem('userToken', action.payload.token);
         }
       })
 
@@ -87,6 +87,4 @@ const loginSlice = createSlice({
 });
 
 export default loginSlice.reducer;
-export const { clearLoginState } = loginSlice.actions;
-
-
+export const {clearLoginState} = loginSlice.actions;

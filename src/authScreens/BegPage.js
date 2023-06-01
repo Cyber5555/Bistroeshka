@@ -32,6 +32,8 @@ export default BegPage = ({}) => {
   const {success_delate} = state.delateInBassketSlice;
   const {success_count_change} = state.plusMinusBasketSlice;
   const {all_count, all_price} = state.getBasketPriceCountSlice;
+  const {success_login} = state.loginSlice;
+  const {success_logout} = state.logoutSlice;
   const [token, setToken] = useState(null);
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export default BegPage = ({}) => {
     return () => {
       return focus();
     };
-  }, [navigation]);
+  }, [navigation, success_logout, success_login]);
 
   useEffect(() => {
     if (success_delate) dispatch(getAllBasketRequest({}));
