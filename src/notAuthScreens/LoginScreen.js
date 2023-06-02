@@ -1,35 +1,35 @@
-import {Button, StyleSheet, Text, View} from 'react-native';
-import Wrapper from '../../components/fixedElements/Wrapper';
-import {ButtonColor, TextColor} from '../../components/colors/colors';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import InputContainer from '../../components/inputs/InputContainer';
-import {BigButton} from '../../components/buttons/bigButton';
-import {useNavigation} from '@react-navigation/native';
-import {useEffect, useState} from 'react';
-import {clearLoginState, loginRequest} from '../../store/reducer/loginSlice';
-import {useDispatch, useSelector} from 'react-redux';
-import PhoneInput from './../../components/inputs/phoneInput';
-import RNRestart from 'react-native-restart';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Button, StyleSheet, Text, View } from "react-native";
+import Wrapper from "../../components/fixedElements/Wrapper";
+import { ButtonColor, TextColor } from "../../components/colors/colors";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import InputContainer from "../../components/inputs/InputContainer";
+import { BigButton } from "../../components/buttons/bigButton";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { clearLoginState, loginRequest } from "../../store/reducer/loginSlice";
+import { useDispatch, useSelector } from "react-redux";
+import PhoneInput from "./../../components/inputs/phoneInput";
+import RNRestart from "react-native-restart";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default LoginScreen = ({}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const [eye, setEye] = useState(true);
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const state = useSelector(state => state);
-  const {password_error, phone_error, user_not_verify, loading, success_login} =
+  const { password_error, phone_error, user_not_verify, loading, success_login } =
     state.loginSlice;
 
   useEffect(() => {
     if (user_not_verify) {
-      navigation.navigate('ConfirmPhoneRegister', {
+      navigation.navigate("ConfirmPhoneRegister", {
         parameter: phone,
       });
       dispatch(clearLoginState());
-      setPassword('');
-      setPhone('');
+      setPassword("");
+      setPhone("");
     }
   }, [user_not_verify]);
 
@@ -38,30 +38,36 @@ export default LoginScreen = ({}) => {
       <KeyboardAwareScrollView>
         <Text style={styles.title}>Вход</Text>
         <PhoneInput
-          label={'Номер телефона'}
-          keyboardType={'phone-pad'}
+          label={"Номер телефона"}
+          keyboardType={"phone-pad"}
           propsStyle={styles.firstInput}
-          onChangeText={e => setPhone(e)}
+          onChangeText={e => {
+            setPhone(e);
+            dispatch(clearLoginState())
+          }}
           value={phone}
           error={phone_error}
         />
         <InputContainer
-          label={'Пароль'}
-          keyboardType={'default'}
+          label={"Пароль"}
+          keyboardType={"default"}
           secureTextEntry={eye}
           setEye={() => setEye(!eye)}
           password={true}
-          onChangeText={e => setPassword(e)}
+          onChangeText={e => {
+            setPassword(e);
+            dispatch(clearLoginState());
+          }}
           value={password}
           error={password_error}
         />
         <Text
           style={styles.forgotText}
-          onPress={() => navigation.navigate('ForgotPassword')}>
+          onPress={() => navigation.navigate("ForgotPassword")}>
           Забыли пароль?
         </Text>
         <BigButton
-          buttonText={'Войти'}
+          buttonText={"Войти"}
           loading={loading}
           navigation={() => {
             dispatch(
@@ -70,9 +76,9 @@ export default LoginScreen = ({}) => {
                 password: password,
               }),
             ).then(async login => {
-              await AsyncStorage.setItem('userToken', login.payload.token).then(
+              await AsyncStorage.setItem("userToken", login.payload.token).then(
                 () => {
-                  navigation.navigate('Catalog');
+                  navigation.navigate("Catalog");
                 },
               );
             });
@@ -80,7 +86,7 @@ export default LoginScreen = ({}) => {
         />
         <Text style={styles.haveAccount}>Нет аккаунта?</Text>
         <Text
-          onPress={() => navigation.navigate('RegisterScreen')}
+          onPress={() => navigation.navigate("RegisterScreen")}
           style={styles.goToReg}>
           Зарегистрироваться
         </Text>
@@ -94,31 +100,31 @@ const styles = StyleSheet.create({
     marginTop: 114,
     color: TextColor,
     fontSize: 36,
-    textAlign: 'center',
-    fontFamily: 'Raleway-Medium',
+    textAlign: "center",
+    fontFamily: "Raleway-Medium",
     marginBottom: 30,
   },
   firstInput: {
     marginBottom: 15,
   },
   forgotText: {
-    textAlign: 'right',
+    textAlign: "right",
     color: TextColor,
     marginTop: 10,
-    fontFamily: 'Montserrat-Medium',
-    textDecorationLine: 'underline',
+    fontFamily: "Montserrat-Medium",
+    textDecorationLine: "underline",
   },
   haveAccount: {
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: "Montserrat-Regular",
     fontSize: 15,
     color: TextColor,
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 30,
   },
   goToReg: {
     color: ButtonColor,
-    textAlign: 'center',
-    fontFamily: 'Montserrat-SemiBold',
+    textAlign: "center",
+    fontFamily: "Montserrat-SemiBold",
     fontSize: 15,
     marginBottom: 20,
   },

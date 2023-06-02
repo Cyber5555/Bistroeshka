@@ -1,11 +1,11 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import axios from 'axios';
-import {API_URL} from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const loginRequest = createAsyncThunk(
-  'login',
-  async (data, {rejectWithValue}) => {
+  "login",
+  async (data, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${API_URL}/api/login`, data);
       return response.data;
@@ -16,18 +16,18 @@ export const loginRequest = createAsyncThunk(
 );
 
 const loginSlice = createSlice({
-  name: 'login',
+  name: "login",
   initialState: {
-    password_error: '',
-    phone_error: '',
+    password_error: "",
+    phone_error: "",
 
     loading: false,
     success_login: false,
   },
   reducers: {
     clearLoginState(state) {
-      state.password_error = '';
-      state.phone_error = '';
+      state.password_error = "";
+      state.phone_error = "";
       state.user_not_verify = false;
       state.loading = false;
       state.success_login = false;
@@ -38,8 +38,8 @@ const loginSlice = createSlice({
     builder
 
       .addCase(loginRequest.pending, state => {
-        state.password_error = '';
-        state.phone_error = '';
+        state.password_error = "";
+        state.phone_error = "";
         state.user_not_verify = false;
         state.loading = false;
         state.success_login = false;
@@ -55,31 +55,29 @@ const loginSlice = createSlice({
 
       .addCase(loginRequest.rejected, (state, action) => {
         if (!action.payload.status) {
-          state.phone_error =
-            action.payload.message.phone || action.payload.message;
-          state.password_error =
-            action.payload.message.password || action.payload.message;
+          // state.phone_error = action.payload.message.phone;
+          // state.password_error =
+          //   action.payload.message.password || action.payload.message;
           state.loading = false;
 
-          state.loading = false;
           state.success_login = false;
-
-          if (action.payload?.data?.phone == 'The phone field is required.') {
-            state.phone_error = 'Данные поля обязательны.';
+          console.log(action.payload);
+          if (action.payload?.data?.phone == "The phone field is required.") {
+            state.phone_error = "Данные поля обязательны.";
           }
 
           if (
-            action.payload?.data?.password == 'The password field is required.'
+            action.payload?.data?.password == "The password field is required."
           ) {
-            state.password_error = 'Данные поля обязательны.';
+            state.password_error = "Данные поля обязательны.";
           }
 
-          if (action.payload?.message == 'user not registred') {
-            state.phone_error = 'Такой пользователь не существует.';
-          } else if (action.payload?.message == 'user not verified') {
+          if (action.payload?.message == "user not registred") {
+            state.phone_error = "Такой пользователь не существует.";
+          } else if (action.payload?.message == "user not verified") {
             state.user_not_verify = true;
-          } else if (action.payload?.message == 'not valid password') {
-            state.password_error = 'Неверный пароль.';
+          } else if (action.payload?.message == "not valid password") {
+            state.password_error = "Неверный пароль.";
           }
         }
       });
@@ -87,4 +85,4 @@ const loginSlice = createSlice({
 });
 
 export default loginSlice.reducer;
-export const {clearLoginState} = loginSlice.actions;
+export const { clearLoginState } = loginSlice.actions;

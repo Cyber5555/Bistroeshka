@@ -1,31 +1,31 @@
-import {StyleSheet, Text, TextInput, View} from 'react-native';
-import Wrapper from '../../components/fixedElements/Wrapper';
+import { StyleSheet, Text, TextInput, Vibration, View } from "react-native";
+import Wrapper from "../../components/fixedElements/Wrapper";
 import {
   BackgroundInput,
   ButtonColor,
   TextColor,
-} from '../../components/colors/colors';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {BigButton} from '../../components/buttons/bigButton';
-import {useNavigation} from '@react-navigation/native';
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {CodeField} from 'react-native-confirmation-code-field';
-import SuccessModal from './../../components/modals/successModal';
-import {useDispatch, useSelector} from 'react-redux';
-import {makeCallConfirmRequest} from '../../store/reducer/makeCallConfirmSlice';
+} from "../../components/colors/colors";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { BigButton } from "../../components/buttons/bigButton";
+import { useNavigation } from "@react-navigation/native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CodeField } from "react-native-confirmation-code-field";
+import SuccessModal from "./../../components/modals/successModal";
+import { useDispatch, useSelector } from "react-redux";
+import { makeCallConfirmRequest } from "../../store/reducer/makeCallConfirmSlice";
 import {
   clearBorder,
   clearState,
   makeVerificationRegisterRequest,
-} from '../../store/reducer/makeVerificationRegisterSlice';
-import {Vibration} from 'react-native';
-import {CountdownTimer} from '../../components/countDown/countDown';
+} from "../../store/reducer/makeVerificationRegisterSlice";
+import { resendCodeVerifyRequest } from "../../store/reducer/resendCodeVerifySlice";
 
-export default ConfirmPhoneRegister = ({route, targetDate}) => {
+export default ConfirmPhoneRegister = ({ route, targetDate }) => {
   const [modal_open, setModalOpen] = useState(false);
-  const [button_bool, setButtonBool] = useState(false);
   const [send_button, setSendButton] = useState(true);
-  const [code_verify, setCodeVerify] = useState('');
+  const [code_verify, setCodeVerify] = useState("");
+  const [counter, setCounter] = useState(60);
+  const [accept, setAccept] = useState(true);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const state = useSelector(state => state);
@@ -36,12 +36,7 @@ export default ConfirmPhoneRegister = ({route, targetDate}) => {
     error_border,
   } = state.makeVerificationRegisterSlice;
   const inputRef = useRef();
-  // const THREE_DAYS_IN_MS = 3 * 24 * 60 * 60 * 1000;
-  const THREE_DAYS_IN_MS = 1 * 10 * 1000;
-  const NOW_IN_MS = new Date().getTime();
 
-  const dateTimeAfterThreeDays = NOW_IN_MS + THREE_DAYS_IN_MS;
-  const [timer, setTimer] = useState(dateTimeAfterThreeDays);
   useEffect(() => {
     // dispatch(makeCallConfirmRequest({}));
     dispatch(clearBorder());
@@ -52,20 +47,37 @@ export default ConfirmPhoneRegister = ({route, targetDate}) => {
     if (verify_register_success) {
       setModalOpen(true);
       dispatch(clearState());
-      dispatch(clearBorder())
-      setCodeVerify('');
+      dispatch(clearBorder());
+      setCodeVerify("");
     }
   }, [verify_register_success]);
 
   useEffect(() => {
     if (verify_register_error) {
-      Vibration.vibrate();
+      Vibration.vibrate(500);
       dispatch(clearState());
-      setCodeVerify('');
+      setCodeVerify("");
     }
   }, [verify_register_error]);
 
-  const renderCell = ({index, symbol, isFocused}) => {
+
+  useEffect(() => {
+    if (accept) {
+      const timer = counter > 0 && setInterval(() => {
+        setCounter(counter - 1);
+
+      }, 1000);
+      if (counter == 1) {
+        setCounter(60);
+        clearInterval(timer);
+        setAccept(false);
+      }
+      return () => clearInterval(timer);
+    }
+  }, [counter, accept]);
+
+
+  const renderCell = ({ index, symbol, isFocused }) => {
     let textChild = null;
     if (symbol) {
       textChild = symbol;
@@ -102,11 +114,11 @@ export default ConfirmPhoneRegister = ({route, targetDate}) => {
           чтобы закончить регистрацию
         </Text>
 
-        <CountdownTimer
-          targetDate={timer}
-          showMinutes={true}
-          showSeconds={true}
-        />
+        <Text
+          style={styles.timer}>
+          {counter == 60 ? `01:00` : counter < 10 ? `00: 0${counter}` : `00: ${counter}`}
+        </Text>
+
 
         <CodeField
           autoFocus={true}
@@ -124,12 +136,19 @@ export default ConfirmPhoneRegister = ({route, targetDate}) => {
 
         <Text
           style={styles.sendCodeMore}
-          onPress={() => setButtonBool(true)}
-          disabled={button_bool}>
+          onPress={() => {
+            dispatch(resendCodeVerifyRequest({ phone: route?.params?.parameter })).then(res => {
+              console.log(res.payload.status);
+              if (res.payload.status) {
+                setAccept(true);
+              }
+            });
+          }}
+          disabled={accept == true}>
           Отправить код повторно
         </Text>
         <BigButton
-          buttonText={'Подтвердить'}
+          buttonText={"Подтвердить"}
           navigation={() => {
             dispatch(
               makeVerificationRegisterRequest({
@@ -144,10 +163,10 @@ export default ConfirmPhoneRegister = ({route, targetDate}) => {
         />
         <SuccessModal
           visible={modal_open}
-          successText={'Ваш номер\n подтверждён'}
-          buttonText={'Войти'}
+          successText={"Ваш номер\n подтверждён"}
+          buttonText={"Войти"}
           press={() => {
-            navigation.navigate('LoginScreen');
+            navigation.navigate("LoginScreen");
             setModalOpen(false);
           }}
         />
@@ -161,21 +180,21 @@ const styles = StyleSheet.create({
     marginTop: 114,
     color: TextColor,
     fontSize: 36,
-    textAlign: 'center',
-    fontFamily: 'Montserrat-SemiBold',
+    textAlign: "center",
+    fontFamily: "Montserrat-SemiBold",
     marginBottom: 30,
   },
   forgotInfo: {
-    color: '#545454',
-    textAlign: 'center',
+    color: "#545454",
+    textAlign: "center",
     marginBottom: 25,
-    fontFamily: 'Montserrat-Regular',
+    fontFamily: "Montserrat-Regular",
   },
   confirmInputParent: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     columnGap: 10,
     marginTop: 10,
   },
@@ -185,31 +204,31 @@ const styles = StyleSheet.create({
     backgroundColor: BackgroundInput,
     borderRadius: 8,
     color: TextColor,
-    textAlign: 'center',
+    textAlign: "center",
   },
   sendCodeMore: {
-    textAlign: 'center',
+    textAlign: "center",
     color: TextColor,
     marginTop: 10,
-    textDecorationLine: 'underline',
-    fontFamily: 'Montserrat-Medium',
+    textDecorationLine: "underline",
+    fontFamily: "Montserrat-Medium",
   },
   button: {
     marginBottom: 20,
   },
   focusCell: {
     borderWidth: 1,
-    borderColor: 'red',
+    borderColor: "red",
   },
   timerBoxes: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     margin: 0,
     padding: 0,
     // marginBottom: 20,
   },
   timer: {
     color: TextColor,
-    textAlign: 'center',
+    textAlign: "center",
     // marginBottom: 20,
     fontSize: 14,
   },
