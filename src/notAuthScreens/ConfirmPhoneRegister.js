@@ -12,7 +12,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CodeField } from "react-native-confirmation-code-field";
 import SuccessModal from "./../../components/modals/successModal";
 import { useDispatch, useSelector } from "react-redux";
-import { makeCallConfirmRequest } from "../../store/reducer/makeCallConfirmSlice";
 import {
   clearBorder,
   clearState,
@@ -28,7 +27,7 @@ export default ConfirmPhoneRegister = ({ route, targetDate }) => {
   const [accept, setAccept] = useState(true);
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const state = useSelector(state => state);
+  const state = useSelector(state1 => state1);
   const {
     verify_register_success,
     verify_register_error,
@@ -38,7 +37,6 @@ export default ConfirmPhoneRegister = ({ route, targetDate }) => {
   const inputRef = useRef();
 
   useEffect(() => {
-    // dispatch(makeCallConfirmRequest({}));
     dispatch(clearBorder());
     dispatch(clearState());
   }, [navigation]);

@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
-import Wrapper from '../../components/fixedElements/Wrapper';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import Wrapper from "../../components/fixedElements/Wrapper";
 import {
   ActivityIndicator,
   FlatList,
@@ -8,23 +8,23 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import {CatalogRenders} from '../../components/catalogRenders/catalogRenders';
-import {SearchInput} from '../../components/inputs/searchInput';
-import {SubCategory} from '../../components/catalogRenders/subCategory';
-import {FilterBox} from '../../components/filterBox/filterBox';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {getCategoryRequest} from '../../store/authReducer/getCategorySlice';
+} from "react-native";
+import { CatalogRenders } from "../../components/catalogRenders/catalogRenders";
+import { SearchInput } from "../../components/inputs/searchInput";
+import { SubCategory } from "../../components/catalogRenders/subCategory";
+import { FilterBox } from "../../components/filterBox/filterBox";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
+import { getCategoryRequest } from "../../store/authReducer/getCategorySlice";
 import {
   clearPagination,
   getAllProductRequest,
-} from '../../store/authReducer/getAllProductSlice';
-import {TextColor} from '../../components/colors/colors';
-import {store} from '../../store';
-import {addFavoriteRequest} from '../../store/authReducer/addFavoriteSlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {addBasketRequest} from '../../store/authReducer/addBasketSlice';
+} from "../../store/authReducer/getAllProductSlice";
+import { TextColor } from "../../components/colors/colors";
+import { store } from "../../store";
+import { addFavoriteRequest } from "../../store/authReducer/addFavoriteSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { addBasketRequest } from "../../store/authReducer/addBasketSlice";
 
 export default Catalog = () => {
   const [active, setActive] = useState(0);
@@ -33,25 +33,25 @@ export default Catalog = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const state = useSelector(state => state);
-  const {category_data, loading_category} = state.getCategorySlice;
-  const {all_product_data, current_page, loading, stop_paginate} =
+  const { category_data, loading_category } = state.getCategorySlice;
+  const { all_product_data, current_page, loading, stop_paginate } =
     state.getAllProductSlice;
-  const {success_favorite} = state.addFavoriteSlice;
-  const [item_id, setItemId] = useState('');
+  const { success_favorite } = state.addFavoriteSlice;
+  const [item_id, setItemId] = useState("");
   const [refresh, setRefresh] = useState(false);
   const [token, setToken] = useState(null);
   const [selectedFavorite, setSelectFavorite] = useState([]);
   const [selectedBasket, setSelectBasket] = useState([]);
-  const [price_min, setPriceMin] = useState('');
-  const [price_max, setPriceMax] = useState('');
+  const [price_min, setPriceMin] = useState("");
+  const [price_max, setPriceMax] = useState("");
   const [show_category, setShowCategory] = useState(true);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [searched, setSearched] = useState(true);
 
   useEffect(() => {
-    const isFocus = navigation.addListener('focus', async () => {
+    const isFocus = navigation.addListener("focus", async () => {
       dispatch(clearPagination());
-      AsyncStorage.getItem('userToken').then(userToken => {
+      AsyncStorage.getItem("userToken").then(userToken => {
         setToken(userToken);
         dispatch(getCategoryRequest({})).then(res => {
           if (res.payload.status) {
@@ -76,7 +76,7 @@ export default Catalog = () => {
 
   useEffect(() => {
     setActive(0);
-    AsyncStorage.getItem('userToken').then(userToken => {
+    AsyncStorage.getItem("userToken").then(userToken => {
       setToken(userToken);
     });
   }, [loading_category]);
@@ -173,7 +173,7 @@ export default Catalog = () => {
   };
   // has_bascet
 
-  const renderCategoryItem = ({item, index}) => {
+  const renderCategoryItem = ({ item, index }) => {
     return (
       <SubCategory
         text={item.title}
@@ -199,7 +199,7 @@ export default Catalog = () => {
     );
   };
 
-  const renderItem = ({item, index}) => {
+  const renderItem = ({ item, index }) => {
     return (
       <CatalogRenders
         add_remove_beg={selectedBasket.indexOf(item.id) > -1 ? true : false}
@@ -210,8 +210,8 @@ export default Catalog = () => {
           if (token) {
             toggleBasket(item, index);
           } else {
-            navigation.navigate('NotAuthNavigators', {
-              screen: 'LoginOrRegister',
+            navigation.navigate("TabNavigation", {
+              screen: "LoginOrRegister",
             });
           }
         }}
@@ -219,13 +219,13 @@ export default Catalog = () => {
           if (token) {
             toggleFavorite(item, index);
           } else {
-            navigation.navigate('NotAuthNavigators', {
-              screen: 'LoginOrRegister',
+            navigation.navigate("TabNavigation", {
+              screen: "LoginOrRegister",
             });
           }
         }}
         navigation={() => {
-          navigation.navigate('SinglePage', {
+          navigation.navigate("SinglePage", {
             parameter: item.id,
           });
         }}
@@ -241,12 +241,12 @@ export default Catalog = () => {
 
   return (
     <Wrapper
-      title={'Каталог'}
+      title={"Каталог"}
       leftIcon={false}
       rightIcon={true}
       openFilter={() => {
         setOpenFilter(true);
-        setItemId('');
+        setItemId("");
       }}>
       <FilterBox
         isOpen={open_filter}
@@ -274,17 +274,17 @@ export default Catalog = () => {
           );
         }}
         clear={() => {
-          setItemId('');
+          setItemId("");
           dispatch(clearPagination());
-          setPriceMax('');
-          setPriceMin('');
+          setPriceMax("");
+          setPriceMin("");
           setShowCategory(true);
           setSearched(true);
           dispatch(
             getAllProductRequest({
               search: search,
-              min_price: '',
-              max_price: '',
+              min_price: "",
+              max_price: "",
               category_id: category_data[0]?.id,
               page: 1,
               token: token,
@@ -296,16 +296,16 @@ export default Catalog = () => {
         value={search}
         setValue={e => {
           setSearch(e);
-          if (e == '') {
+          if (e == "") {
             dispatch(clearPagination());
             setShowCategory(true);
             setSearched(true);
             dispatch(
               getAllProductRequest({
-                search: '',
+                search: "",
                 min_price: price_min,
                 max_price: price_max,
-                category_id: '',
+                category_id: "",
                 page: 1,
                 token: token,
               }),
@@ -326,21 +326,21 @@ export default Catalog = () => {
                 search: search,
                 min_price: price_min,
                 max_price: price_max,
-                category_id: '',
+                category_id: "",
                 page: 1,
                 token: token,
               }),
             );
           } else if (!searched && search) {
-            setSearch('');
+            setSearch("");
             setShowCategory(true);
             setSearched(true);
             dispatch(
               getAllProductRequest({
-                search: '',
+                search: "",
                 min_price: price_min,
                 max_price: price_max,
-                category_id: '',
+                category_id: "",
                 page: 1,
                 token: token,
               }),
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
     color: TextColor,
   },
 });

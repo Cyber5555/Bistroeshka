@@ -2,12 +2,12 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { API_URL } from "@env";
 
-export const makeVerificationRegisterRequest = createAsyncThunk(
-  "user_verification",
+export const checkCodeForgotPasswordRequest = createAsyncThunk(
+  "check_remember_token",
   async (data, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${API_URL}/api/user_verification`,
+        `${API_URL}/api/check_remember_token`,
         data,
       );
       return response.data;
@@ -17,8 +17,8 @@ export const makeVerificationRegisterRequest = createAsyncThunk(
   },
 );
 
-const makeVerificationRegisterSlice = createSlice({
-  name: "user_verification",
+const checkCodeForgotPasswordSlice = createSlice({
+  name: "check_remember_token",
   initialState: {
     loading: false,
     verify_register_success: false,
@@ -36,12 +36,12 @@ const makeVerificationRegisterSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      .addCase(makeVerificationRegisterRequest.pending, state => {
+      .addCase(checkCodeForgotPasswordRequest.pending, state => {
         state.loading = true;
         state.error_border = false;
       })
 
-      .addCase(makeVerificationRegisterRequest.fulfilled, (state, action) => {
+      .addCase(checkCodeForgotPasswordRequest.fulfilled, (state, action) => {
         if (action.payload.status) {
           state.loading = false;
           state.verify_register_success = true;
@@ -49,7 +49,7 @@ const makeVerificationRegisterSlice = createSlice({
         }
       })
 
-      .addCase(makeVerificationRegisterRequest.rejected, (state, action) => {
+      .addCase(checkCodeForgotPasswordRequest.rejected, (state, action) => {
         if (!action.payload.status) {
           state.verify_register_error = true;
           state.loading = false;
@@ -59,5 +59,5 @@ const makeVerificationRegisterSlice = createSlice({
   },
 });
 
-export default makeVerificationRegisterSlice.reducer;
-export const { clearState, clearBorder } = makeVerificationRegisterSlice.actions;
+export default checkCodeForgotPasswordSlice.reducer;
+export const { clearState, clearBorder } = checkCodeForgotPasswordSlice.actions;

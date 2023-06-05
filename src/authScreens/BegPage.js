@@ -1,5 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import Wrapper from './../../components/fixedElements/Wrapper';
+import React, { useCallback, useEffect, useState } from "react";
+import Wrapper from "./../../components/fixedElements/Wrapper";
 import {
   Dimensions,
   FlatList,
@@ -7,40 +7,40 @@ import {
   StyleSheet,
   Text,
   View,
-} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {BegRenderedItems} from '../../components/begRenderedItems/begRenderedItems';
-import {BigButton} from './../../components/buttons/bigButton';
-import SuccessModal from './../../components/modals/successModal';
-import {useDispatch, useSelector} from 'react-redux';
-import {getAllBasketRequest} from '../../store/authReducer/getAllBasketSlice';
-import {TextColor} from '../../components/colors/colors';
-import {delateInBassketRequest} from '../../store/authReducer/delateInBassketSlice';
-import {addFavoriteRequest} from '../../store/authReducer/addFavoriteSlice';
-import {getBasketPriceCountRequest} from '../../store/authReducer/getBasketPriceCountSlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {buyProductsRequest} from '../../store/authReducer/buyProductsSlice';
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { BegRenderedItems } from "../../components/begRenderedItems/begRenderedItems";
+import { BigButton } from "./../../components/buttons/bigButton";
+import SuccessModal from "./../../components/modals/successModal";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllBasketRequest } from "../../store/authReducer/getAllBasketSlice";
+import { TextColor } from "../../components/colors/colors";
+import { delateInBassketRequest } from "../../store/authReducer/delateInBassketSlice";
+import { addFavoriteRequest } from "../../store/authReducer/addFavoriteSlice";
+import { getBasketPriceCountRequest } from "../../store/authReducer/getBasketPriceCountSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { buyProductsRequest } from "../../store/authReducer/buyProductsSlice";
 
-const {width} = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 export default BegPage = ({}) => {
   const [modal_visible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const state = useSelector(state1 => state1);
-  const {all_basket, loading} = state.getAllBasketSlice;
-  const {success_delate} = state.delateInBassketSlice;
-  const {success_count_change} = state.plusMinusBasketSlice;
-  const {all_count, all_price} = state.getBasketPriceCountSlice;
-  const {success_login} = state.loginSlice;
-  const {success_logout} = state.logoutSlice;
+  const { all_basket, loading } = state.getAllBasketSlice;
+  const { success_delate } = state.delateInBassketSlice;
+  const { success_count_change } = state.plusMinusBasketSlice;
+  const { all_count, all_price } = state.getBasketPriceCountSlice;
+  const { success_login } = state.loginSlice;
+  const { success_logout } = state.logoutSlice;
   const [token, setToken] = useState(null);
 
   useEffect(() => {
-    const focus = navigation.addListener('focus', () => {
+    const focus = navigation.addListener("focus", () => {
       dispatch(getAllBasketRequest({}));
     });
-    AsyncStorage.getItem('userToken').then(userToken => {
+    AsyncStorage.getItem("userToken").then(userToken => {
       setToken(userToken);
       dispatch(getBasketPriceCountRequest(userToken));
     });
@@ -57,10 +57,10 @@ export default BegPage = ({}) => {
   //   if (success_count_change);
   // }, [success_count_change]);
 
-  const renderItem = ({item, index}) => (
+  const renderItem = ({ item, index }) => (
     <BegRenderedItems
       navigation={() =>
-        navigation.navigate('SinglePage', {
+        navigation.navigate("SinglePage", {
           parameter: item.product_id,
         })
       }
@@ -82,7 +82,7 @@ export default BegPage = ({}) => {
     <Wrapper
       leftIcon={false}
       rightIcon={false}
-      title={'Корзина'}
+      title={"Корзина"}
       bottomLine={true}
       navigation={() => navigation.goBack()}>
       <FlatList
@@ -93,8 +93,8 @@ export default BegPage = ({}) => {
         ListFooterComponent={() =>
           all_basket.length ? (
             <BigButton
-              buttonStyle={{margin: 40}}
-              buttonText={'Оформить заказ'}
+              buttonStyle={{ margin: 40 }}
+              buttonText={"Оформить заказ"}
               navigation={() => {
                 dispatch(buyProductsRequest({})).then(res => {
                   // console.log(res.payload);
@@ -126,12 +126,12 @@ export default BegPage = ({}) => {
       </View>
       <SuccessModal
         press={() => {
-          navigation.navigate('Catalog');
+          navigation.navigate("Catalog");
           setModalVisible(false);
         }}
         visible={modal_visible}
-        successText={'Заказ успешно принят'}
-        buttonText={'В Каталог'}
+        successText={"Заказ успешно принят"}
+        buttonText={"В Каталог"}
       />
     </Wrapper>
   );
@@ -141,30 +141,30 @@ const styles = StyleSheet.create({
     width: width,
     marginLeft: -20,
     borderTopWidth: 2,
-    borderTopColor: '#F7F7F7',
+    borderTopColor: "#F7F7F7",
     paddingVertical: 17,
     paddingHorizontal: 20,
   },
   productCount: {
-    fontFamily: 'Montserrat-Medium',
-    color: '#662916',
+    fontFamily: "Montserrat-Medium",
+    color: "#662916",
     fontSize: 12,
   },
   priceParent: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     marginTop: 3,
   },
   priceText: {
-    color: '#662916',
-    fontFamily: 'Montserrat-Medium',
+    color: "#662916",
+    fontFamily: "Montserrat-Medium",
     fontSize: 20,
   },
   price: {
-    color: '#662916',
-    fontFamily: 'Montserrat-Regular',
+    color: "#662916",
+    fontFamily: "Montserrat-Regular",
     fontSize: 20,
   },
   emptyParent: {
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 20,
-    textAlign: 'center',
+    textAlign: "center",
     color: TextColor,
   },
 });
