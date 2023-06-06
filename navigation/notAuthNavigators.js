@@ -4,7 +4,7 @@ import LoginScreen from "../src/notAuthScreens/LoginScreen";
 import RegisterScreen from "./../src/notAuthScreens/RegisterScreen";
 import ForgotPassword from "../src/notAuthScreens/ForgotPassword";
 import ConfirmTellScreen from "../src/notAuthScreens/ConfirmTellScreen";
-import NewPassword from "../src/notAuthScreens/NewPassword";
+import { NewPassword } from "../src/notAuthScreens/NewPassword";
 import ConfirmPhoneRegister from "../src/notAuthScreens/ConfirmPhoneRegister";
 import EditAddress from "../src/authScreens/EditAddress";
 import EditPasswordUser from "./../src/authScreens/EditPasswordUser";

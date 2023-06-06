@@ -65,7 +65,7 @@ export default ConfirmTellScreen = ({ route }) => {
       if (counter == 1) {
         setCounter(60);
         clearInterval(timer);
-        setAccept(true);
+        setAccept(false);
       }
       return () => clearInterval(timer);
     }
@@ -124,13 +124,13 @@ export default ConfirmTellScreen = ({ route }) => {
           style={styles.sendCodeMore}
           onPress={() => {
             dispatch(resendCodeVerifyRequest({ phone: route?.params?.parameter })).then(res => {
-              console.log(res.payload.status);
+              console.log(res.payload, "Отправить код повторно");
               if (res.payload.status) {
-                setAccept(false);
+                setAccept(true);
               }
             });
           }}
-          disabled={accept == true}>Отправить код повторно</Text>
+          disabled={accept}>Отправить код повторно</Text>
 
         <BigButton
           buttonText={"Подтвердить"}
@@ -138,11 +138,16 @@ export default ConfirmTellScreen = ({ route }) => {
             dispatch(
               checkCodeForgotPasswordRequest({
                 phone: route.params.parameter,
-                remember_token: code_verify,
+                remember_code: code_verify,
               }),
             ).then(res => {
               console.log(res.payload);
-              // navigation.navigate("NewPassword")
+              if (res.payload?.status) {
+                navigation.navigate("NewPassword", {
+                  phone: route.params.parameter,
+                  remember_code: code_verify,
+                });
+              }
             });
           }}
           buttonStyle={styles.button}

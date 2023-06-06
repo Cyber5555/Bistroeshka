@@ -1,4 +1,4 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import registerSlice from "./reducer/registerSlice";
 import makeVerificationRegisterSlice from "./reducer/makeVerificationRegisterSlice";
 import loginSlice from "./reducer/loginSlice";
@@ -20,6 +20,8 @@ import deleteHistorySlice from "./authReducer/deleteHistorySlice";
 import logoutSlice from "./authReducer/logoutSlice";
 import resendCodeVerifySlice from "./reducer/resendCodeVerifySlice";
 import checkCodeForgotPasswordSlice from "./reducer/checkCodeForgotPasswordSlice";
+import newPasswordForgotSlice from "./reducer/newPasswordForgotSlice";
+import changeAuthUserPasswordSlice from "./authReducer/changeAuthUserPasswordSlice";
 
 const rootReducer = combineReducers({
   registerSlice: registerSlice,
@@ -43,6 +45,8 @@ const rootReducer = combineReducers({
   logoutSlice: logoutSlice,
   resendCodeVerifySlice: resendCodeVerifySlice,
   checkCodeForgotPasswordSlice: checkCodeForgotPasswordSlice,
+  newPasswordForgotSlice: newPasswordForgotSlice,
+  changeAuthUserPasswordSlice: changeAuthUserPasswordSlice,
 });
 
 export const store = configureStore({
