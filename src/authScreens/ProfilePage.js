@@ -212,7 +212,6 @@ export default ProfilePage = ({}) => {
               // await AsyncStorage.clear();
               // await RNRestart.Restart();
               dispatch(logoutRequest(token)).then(async logout => {
-                console.log(logout.payload);
                 await AsyncStorage.removeItem("userToken").then(() => {
                   navigation.navigate("Catalog");
                 });

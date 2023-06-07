@@ -52,11 +52,11 @@ const newPasswordForgotSlice = createSlice({
 
       .addCase(newPasswordForgotRequest.rejected, (state, action) => {
         if (!action.payload.status) {
-          // console.log("action.payload--------------->>>>>", action.payload, "action.payload<<<---------------");
+
           state.loading = false;
 
           state.success_change_password = false;
-          console.log(action.payload);
+
 
 
           if (

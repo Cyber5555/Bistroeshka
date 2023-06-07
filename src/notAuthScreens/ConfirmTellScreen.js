@@ -124,7 +124,6 @@ export default ConfirmTellScreen = ({ route }) => {
           style={styles.sendCodeMore}
           onPress={() => {
             dispatch(resendCodeVerifyRequest({ phone: route?.params?.parameter })).then(res => {
-              console.log(res.payload, "Отправить код повторно");
               if (res.payload.status) {
                 setAccept(true);
               }
@@ -141,7 +140,6 @@ export default ConfirmTellScreen = ({ route }) => {
                 remember_code: code_verify,
               }),
             ).then(res => {
-              console.log(res.payload);
               if (res.payload?.status) {
                 navigation.navigate("NewPassword", {
                   phone: route.params.parameter,

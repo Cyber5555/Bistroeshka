@@ -16,9 +16,7 @@ import SinglePage from "../src/authScreens/SinglePage";
 import Favorites from "../src/authScreens/Favorites";
 import BegPage from "../src/authScreens/BegPage";
 import ProfilePage from "../src/authScreens/ProfilePage";
-import NotAuthNavigators from "./notAuthNavigators";
 import ShopHistory from "../src/authScreens/ShopHistory";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoginOrRegister from "../src/notAuthScreens/LoginOrRegister";
 import { useSelector } from "react-redux";
@@ -26,23 +24,24 @@ import { useSelector } from "react-redux";
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-export default TabNavigation = ({ route }) => {
+export default TabNavigation = () => {
   const [token, setToken] = useState(null);
   const state = useSelector(state1 => state1);
   const { success_login } = state.loginSlice;
   const { success_logout } = state.logoutSlice;
+
+
   useEffect(() => {
-    if (success_login || success_logout) {
-      AsyncStorage.getItem("userToken")
-        .then(userToken => {
-          setToken(userToken);
-        })
-        .catch(() => {
-          setToken(null);
-        });
-    }
-    console.log(token);
-  }, [route, success_login, success_logout]);
+
+    AsyncStorage.getItem("userToken").then(async userToken => {
+      await setToken(userToken);
+    })
+      .catch(() => {
+        setToken(null);
+      });
+
+  }, [success_login, success_logout, state]);
+
 
   return (
     <Tab.Navigator

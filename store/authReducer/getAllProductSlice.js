@@ -7,13 +7,13 @@ export const getAllProductRequest = createAsyncThunk(
   "all_products",
   async (data, { rejectWithValue }) => {
     const token = await AsyncStorage.getItem("userToken");
-    // console.log(data);
+
     try {
       const response = await axios(
         `${API_URL}/api/get_category?page=${data.page}`,
         {
           method: "post",
-          headers: { Authorization: "Bearer " + token || data.token },
+          headers: { Authorization: "Bearer " + data.token },
           // config,
           data,
         },
@@ -49,7 +49,7 @@ const getAllProductSlice = createSlice({
       .addCase(getAllProductRequest.fulfilled, (state, action) => {
         // if (action.payload?.products?.data?.length) {
         state.loading = false;
-        // console.log(action.payload?.products?.data);
+
         if (!state.stop_paginate) {
           state.all_product_data = [
             ...state.all_product_data,

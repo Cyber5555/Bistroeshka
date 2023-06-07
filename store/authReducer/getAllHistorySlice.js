@@ -6,8 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const getAllHistoryRequest = createAsyncThunk(
   "get_history",
   async (data, { rejectWithValue }) => {
-    // const token = await AsyncStorage.getItem('userToken');
-    console.log(data);
+
     try {
       const config = {
         headers: { Authorization: "Bearer " + data.token },

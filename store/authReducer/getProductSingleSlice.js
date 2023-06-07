@@ -1,17 +1,18 @@
-import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import axios from 'axios';
-import {API_URL} from '@env';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { API_URL } from "@env";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const getProductSingleRequest = createAsyncThunk(
-  'single_products',
-  async (data, {rejectWithValue}) => {
-    const token = await AsyncStorage.getItem('userToken');
+  "single_products",
+  async (data, { rejectWithValue }) => {
+    const token = await AsyncStorage.getItem("userToken");
     try {
       const response = await axios.get(
         `${API_URL}/api/get_product/${data.id}`,
-        {headers: {Authorization: 'Bearer ' + token}},
+        { headers: { Authorization: "Bearer " + token } },
       );
+      console.log(response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -20,7 +21,7 @@ export const getProductSingleRequest = createAsyncThunk(
 );
 
 const getProductSingleSlice = createSlice({
-  name: 'single_products',
+  name: "single_products",
   initialState: {
     single_product_data: [],
     loading: false,

@@ -66,14 +66,13 @@ export const NewPassword = ({ route }) => {
           buttonStyle={styles.button}
           navigation={() => {
             // setModalOpen(true);
-            console.log(route);
             dispatch(newPasswordForgotRequest({
               phone: route.params.phone,
               password: password,
               password_confirmation: password_confirmation,
               remember_code: route.params.remember_code,
             })).then(res => {
-              console.log(res.payload);
+
               if (res.payload.status) {
                 setModalOpen(true);
               }

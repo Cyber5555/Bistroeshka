@@ -47,17 +47,13 @@ const changeAuthUserPasswordSlice = createSlice({
       .addCase(changeAuthUserPasswordRequest.fulfilled, (state, action) => {
         if (action.payload.status) {
           state.loading = false;
-          console.log(action.payload);
         }
       })
 
       .addCase(changeAuthUserPasswordRequest.rejected, (state, action) => {
         if (!action.payload.status) {
-          // console.log("action.payload--------------->>>>>", action.payload, "action.payload<<<---------------");
+
           state.loading = false;
-
-
-          console.log(action.payload);
 
 
           if (

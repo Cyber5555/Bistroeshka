@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
 import {
   Dimensions,
   Modal,
@@ -8,36 +8,32 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   View,
-} from 'react-native';
-import {TextColor} from '../colors/colors';
-import {
-  CloseDropdown,
-  CloseFilterIcon,
-  OpenDropdown,
-} from '../icons/includeSvg';
-import {Dropdown} from 'react-native-element-dropdown';
-import {BigButton} from '../buttons/bigButton';
+} from "react-native";
+import { TextColor } from "../colors/colors";
+import { CloseDropdown, CloseFilterIcon, OpenDropdown } from "../icons/includeSvg";
+import { Dropdown } from "react-native-element-dropdown";
+import { BigButton } from "../buttons/bigButton";
 
-const {width, height} = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 
 export const FilterBox = ({
-  isOpen,
-  setOpen,
-  category,
-  setMinPrice,
-  setMaxPrice,
-  minPrice,
-  maxPrice,
-  filter,
-  clear,
-  changeCategory,
-  itemId,
-}) => {
+                            isOpen,
+                            setOpen,
+                            category,
+                            setMinPrice,
+                            setMaxPrice,
+                            minPrice,
+                            maxPrice,
+                            filter,
+                            clear,
+                            changeCategory,
+                            itemId,
+                          }) => {
   const [isFocus, setIsFocus] = useState(false);
   const renderLabel = () => {
     if (itemId || isFocus) {
       return (
-        <Text style={[styles.label, isFocus && {color: 'blue'}]}>
+        <Text style={[styles.label, isFocus && { color: "blue" }]}>
           Dropdown label
         </Text>
       );
@@ -53,13 +49,13 @@ export const FilterBox = ({
 
   return (
     <Modal
-      style={isOpen ? {right: 0} : {right: -width}}
+      style={isOpen ? { right: 0 } : { right: -width }}
       visible={isOpen}
       transparent>
       <TouchableOpacity
         activeOpacity={1}
         onPress={setOpen}
-        style={[styles.touchable, isOpen ? {right: 0} : {right: -width}]}>
+        style={[styles.touchable, isOpen ? { right: 0 } : { right: -width }]}>
         <TouchableHighlight style={styles.parent}>
           <React.Fragment>
             <View style={styles.titleClose}>
@@ -94,7 +90,7 @@ export const FilterBox = ({
             <Text style={styles.takePriceTitle}>Категория</Text>
 
             <Dropdown
-              style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+              style={[styles.dropdown, isFocus && { borderColor: "blue" }]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               itemTextStyle={styles.itemTextStyle}
@@ -110,7 +106,7 @@ export const FilterBox = ({
               maxHeight={300}
               labelField="title"
               valueField="id"
-              placeholder={!isFocus ? 'Выберите категорию' : '...'}
+              placeholder={!isFocus ? "Выберите категорию" : "..."}
               // searchPlaceholder="Search..."
               value={itemId}
               onFocus={() => setIsFocus(true)}
@@ -122,9 +118,9 @@ export const FilterBox = ({
               renderLeftIcon={null}
             />
             <View style={styles.buttons}>
-              <BigButton buttonText={'Филтер'} navigation={filter} />
+              <BigButton buttonText={"Применить"} navigation={filter} />
               <BigButton
-                buttonText={'Сбросить'}
+                buttonText={"Сбросить"}
                 navigation={clear}
                 buttonStyle={{
                   marginTop: 15,
@@ -139,7 +135,7 @@ export const FilterBox = ({
 };
 const styles = StyleSheet.create({
   touchable: {
-    position: 'absolute',
+    position: "absolute",
     width: width,
     height: height + 80,
     zIndex: 100,
@@ -147,22 +143,22 @@ const styles = StyleSheet.create({
   },
   parent: {
     width: width / 1.2,
-    height: '100%',
-    backgroundColor: '#FFFFFF',
+    height: "100%",
+    backgroundColor: "#FFFFFF",
     paddingHorizontal: 20,
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
   },
   titleClose: {
-    width: '100%',
+    width: "100%",
     marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    alignSelf: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    alignSelf: "flex-end",
   },
   title: {
     color: TextColor,
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: "Montserrat-Medium",
     fontSize: 20,
   },
   line: {
@@ -171,41 +167,41 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   inputsParentFirst: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
     columnGap: 10,
   },
   inputsParent: {
     flex: 1,
-    justifyContent: 'space-between',
-    backgroundColor: '#F7F7F7',
+    justifyContent: "space-between",
+    backgroundColor: "#F7F7F7",
     borderRadius: 10,
-    alignItems: 'center',
-    flexDirection: 'row',
+    alignItems: "center",
+    flexDirection: "row",
   },
   inputs: {
-    width: '80%',
+    width: "80%",
     height: 40,
     paddingHorizontal: 10,
     color: TextColor,
   },
   takePriceTitle: {
-    color: '#662916',
+    color: "#662916",
     marginBottom: 11,
     marginTop: 35,
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: "Montserrat-Medium",
     fontSize: 18,
   },
   otDo: {
-    fontFamily: 'Montserrat-Medium',
+    fontFamily: "Montserrat-Medium",
     color: TextColor,
-    width: '20%',
+    width: "20%",
     marginLeft: 5,
   },
   dropdown: {
     height: 50,
-    backgroundColor: '#F7F7F7',
+    backgroundColor: "#F7F7F7",
     borderRadius: 8,
     paddingHorizontal: 8,
   },
@@ -213,8 +209,8 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   label: {
-    position: 'absolute',
-    backgroundColor: 'white',
+    position: "absolute",
+    backgroundColor: "white",
     left: 22,
     top: 8,
     zIndex: 999,
@@ -237,8 +233,8 @@ const styles = StyleSheet.create({
     color: TextColor,
   },
   buttons: {
-    position: 'absolute',
-    bottom: '20%',
-    alignSelf: 'center',
+    position: "absolute",
+    bottom: "20%",
+    alignSelf: "center",
   },
 });

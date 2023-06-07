@@ -1,4 +1,4 @@
-import { StyleSheet, Text } from "react-native";
+import { Dimensions, StyleSheet, Text } from "react-native";
 import Wrapper from "../../components/fixedElements/Wrapper";
 import { TextColor } from "../../components/colors/colors";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -9,6 +9,7 @@ import { useState } from "react";
 import PhoneInput from "../../components/inputs/phoneInput";
 import { resendCodeVerifyRequest } from "../../store/reducer/resendCodeVerifySlice";
 
+const { width } = Dimensions.get("window");
 export default ForgotPassword = ({}) => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -37,7 +38,6 @@ export default ForgotPassword = ({}) => {
           buttonText={"Отправить код"}
           navigation={() => {
             dispatch(resendCodeVerifyRequest({ phone: phone })).then(res => {
-              console.log(res.payload, "res.payload");
               if (res.payload?.status) {
                 navigation.navigate("ConfirmTellScreen", {
                   parameter: phone,
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 114,
     color: TextColor,
-    fontSize: 36,
+    fontSize: width / 12,
     textAlign: "center",
     fontFamily: "Montserrat-SemiBold",
     marginBottom: 30,

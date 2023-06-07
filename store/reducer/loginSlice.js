@@ -61,7 +61,6 @@ const loginSlice = createSlice({
           state.loading = false;
 
           state.success_login = false;
-          console.log(action.payload);
           if (action.payload?.data?.phone == "The phone field is required.") {
             state.phone_error = "Данные поля обязательны.";
           }

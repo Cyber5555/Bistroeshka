@@ -5,13 +5,13 @@ import { API_URL } from "@env";
 export const checkCodeForgotPasswordRequest = createAsyncThunk(
   "check_remember_token",
   async (data, { rejectWithValue }) => {
-    console.log(data, "data");
+
     try {
       const response = await axios.post(
         `${API_URL}/api/check_remember_token`,
         data,
       );
-      console.log(response.data, "response.data");
+
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data, "error.response.data");

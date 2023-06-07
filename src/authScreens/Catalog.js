@@ -1,14 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Wrapper from "../../components/fixedElements/Wrapper";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, FlatList, Keyboard, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { CatalogRenders } from "../../components/catalogRenders/catalogRenders";
 import { SearchInput } from "../../components/inputs/searchInput";
 import { SubCategory } from "../../components/catalogRenders/subCategory";
@@ -16,12 +8,8 @@ import { FilterBox } from "../../components/filterBox/filterBox";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { getCategoryRequest } from "../../store/authReducer/getCategorySlice";
-import {
-  clearPagination,
-  getAllProductRequest,
-} from "../../store/authReducer/getAllProductSlice";
+import { clearPagination, getAllProductRequest } from "../../store/authReducer/getAllProductSlice";
 import { TextColor } from "../../components/colors/colors";
-import { store } from "../../store";
 import { addFavoriteRequest } from "../../store/authReducer/addFavoriteSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { addBasketRequest } from "../../store/authReducer/addBasketSlice";
@@ -34,8 +22,12 @@ export default Catalog = () => {
   const dispatch = useDispatch();
   const state = useSelector(state => state);
   const { category_data, loading_category } = state.getCategorySlice;
-  const { all_product_data, current_page, loading, stop_paginate } =
-    state.getAllProductSlice;
+  const {
+    all_product_data,
+    current_page,
+    loading,
+    stop_paginate,
+  } = state.getAllProductSlice;
   const { success_favorite } = state.addFavoriteSlice;
   const [item_id, setItemId] = useState("");
   const [refresh, setRefresh] = useState(false);
@@ -49,13 +41,14 @@ export default Catalog = () => {
   const [searched, setSearched] = useState(true);
 
   useEffect(() => {
-    const isFocus = navigation.addListener("focus", async () => {
-      dispatch(clearPagination());
+    const isFocus = navigation.addListener("focus", () => {
       AsyncStorage.getItem("userToken").then(userToken => {
         setToken(userToken);
-        dispatch(getCategoryRequest({})).then(res => {
+        dispatch(getCategoryRequest({})).then(async res => {
+          await dispatch(clearPagination());
           if (res.payload.status) {
             setItemId(res.payload.category[0].id);
+            setActive(res.payload.category[0].id);
             dispatch(
               getAllProductRequest({
                 search: search,
@@ -68,16 +61,22 @@ export default Catalog = () => {
             );
           }
         });
+      }).catch(() => {
+        setToken(null);
       });
     });
 
-    return isFocus;
-  }, [navigation]);
+    return () => {
+      return isFocus();
+    };
+  }, [navigation, dispatch]);
 
   useEffect(() => {
-    setActive(0);
+
     AsyncStorage.getItem("userToken").then(userToken => {
       setToken(userToken);
+    }).catch(() => {
+      setToken(null);
     });
   }, [loading_category]);
 
@@ -171,16 +170,17 @@ export default Catalog = () => {
       setSelectBasket([...selectedBasket, item.id]);
     }
   };
-  // has_bascet
+
 
   const renderCategoryItem = ({ item, index }) => {
     return (
       <SubCategory
         text={item.title}
-        index={index}
+        index={item.id}
         isActive={e => {
           dispatch(clearPagination());
           setItemId(item.id);
+          setActive(item.id);
           dispatch(
             getAllProductRequest({
               search: search,
@@ -191,7 +191,6 @@ export default Catalog = () => {
               token: token,
             }),
           );
-          setActive(index);
         }}
         key={index}
         active={active}
@@ -210,18 +209,14 @@ export default Catalog = () => {
           if (token) {
             toggleBasket(item, index);
           } else {
-            navigation.navigate("TabNavigation", {
-              screen: "LoginOrRegister",
-            });
+            navigation.navigate("LoginOrRegister");
           }
         }}
         addFavorite={() => {
           if (token) {
             toggleFavorite(item, index);
           } else {
-            navigation.navigate("TabNavigation", {
-              screen: "LoginOrRegister",
-            });
+            navigation.navigate("LoginOrRegister");
           }
         }}
         navigation={() => {
@@ -318,6 +313,7 @@ export default Catalog = () => {
         searched={searched}
         search={() => {
           dispatch(clearPagination());
+          Keyboard.dismiss();
           if (searched && search) {
             setShowCategory(false);
             setSearched(false);

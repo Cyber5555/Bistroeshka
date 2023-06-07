@@ -1,13 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Wrapper from "./../../components/fixedElements/Wrapper";
-import {
-  Dimensions,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Dimensions, FlatList, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { BegRenderedItems } from "../../components/begRenderedItems/begRenderedItems";
 import { BigButton } from "./../../components/buttons/bigButton";
@@ -16,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllBasketRequest } from "../../store/authReducer/getAllBasketSlice";
 import { TextColor } from "../../components/colors/colors";
 import { delateInBassketRequest } from "../../store/authReducer/delateInBassketSlice";
-import { addFavoriteRequest } from "../../store/authReducer/addFavoriteSlice";
 import { getBasketPriceCountRequest } from "../../store/authReducer/getBasketPriceCountSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { buyProductsRequest } from "../../store/authReducer/buyProductsSlice";
@@ -35,27 +27,42 @@ export default BegPage = ({}) => {
   const { success_login } = state.loginSlice;
   const { success_logout } = state.logoutSlice;
   const [token, setToken] = useState(null);
+  const [new_all_count, setAllCount] = useState(0);
+  const [new_all_price, setAllPrice] = useState(0);
+
 
   useEffect(() => {
     const focus = navigation.addListener("focus", () => {
-      dispatch(getAllBasketRequest({}));
+      dispatch(getAllBasketRequest({})).then(res => {
+        console.log(res.payload);
+        if (res.payload.status) {
+          AsyncStorage.getItem("userToken").then(userToken => {
+            setToken(userToken);
+            // dispatch(getBasketPriceCountRequest(userToken));
+            dispatch(getBasketPriceCountRequest(userToken)).then(res => {
+              console.log(res.payload);
+              setAllCount(res.payload.all_count);
+              setAllPrice(res.payload.all_price);
+            });
+          });
+
+        }
+      });
     });
-    AsyncStorage.getItem("userToken").then(userToken => {
-      setToken(userToken);
-      dispatch(getBasketPriceCountRequest(userToken));
-    });
+    // AsyncStorage.getItem("userToken").then(userToken => {
+    //   setToken(userToken);
+    //   dispatch(getBasketPriceCountRequest(userToken));
+    // });
     return () => {
       return focus();
     };
-  }, [navigation, success_logout, success_login]);
+  }, [navigation]);
+
 
   useEffect(() => {
-    if (success_delate) dispatch(getAllBasketRequest({}));
-  }, [success_delate]);
-
-  // useEffect(() => {
-  //   if (success_count_change);
-  // }, [success_count_change]);
+    setAllCount(all_count);
+    setAllPrice(all_price);
+  }, [success_count_change]);
 
   const renderItem = ({ item, index }) => (
     <BegRenderedItems
@@ -73,7 +80,16 @@ export default BegPage = ({}) => {
       product_id={item.product_id}
       token={token}
       delate={() => {
-        dispatch(delateInBassketRequest(item.product_id));
+        dispatch(delateInBassketRequest(item.product_id)).then(res => {
+          if (res.payload.status) {
+            dispatch(getAllBasketRequest({}));
+            dispatch(getBasketPriceCountRequest(token)).then(res => {
+              console.log(res.payload);
+              setAllCount(res.payload.all_count);
+              setAllPrice(res.payload.all_price);
+            });
+          }
+        });
       }}
     />
   );
@@ -90,6 +106,8 @@ export default BegPage = ({}) => {
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
         keyExtractor={(_, index) => index.toString()}
+        refreshing={loading}
+        refreshControl={<RefreshControl refreshing={loading} />}
         ListFooterComponent={() =>
           all_basket.length ? (
             <BigButton
@@ -97,7 +115,6 @@ export default BegPage = ({}) => {
               buttonText={"Оформить заказ"}
               navigation={() => {
                 dispatch(buyProductsRequest({})).then(res => {
-                  // console.log(res.payload);
                   if (res.payload?.status) {
                     dispatch(getBasketPriceCountRequest(token));
                     setModalVisible(true);
@@ -118,10 +135,10 @@ export default BegPage = ({}) => {
         }}
       />
       <View style={styles.bottomBarInfo}>
-        <Text style={styles.productCount}>Количество: {all_count} шт.</Text>
+        <Text style={styles.productCount}>Количество: {new_all_count} шт.</Text>
         <View style={styles.priceParent}>
           <Text style={styles.priceText}>Товаров на</Text>
-          <Text style={styles.price}>{all_price} Р</Text>
+          <Text style={styles.price}>{new_all_price} Р</Text>
         </View>
       </View>
       <SuccessModal

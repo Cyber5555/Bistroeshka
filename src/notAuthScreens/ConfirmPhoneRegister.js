@@ -136,7 +136,7 @@ export default ConfirmPhoneRegister = ({ route, targetDate }) => {
           style={styles.sendCodeMore}
           onPress={() => {
             dispatch(resendCodeVerifyRequest({ phone: route?.params?.parameter })).then(res => {
-              console.log(res.payload.status);
+
               if (res.payload.status) {
                 setAccept(true);
               }
