@@ -32,7 +32,7 @@ export default Favorites = () => {
   const dispatch = useDispatch();
   const [refresh, setRefresh] = useState(false);
   const [token, setToken] = useState(false);
-
+  const [allData,setAllData] = useState([])
   useEffect(() => {
     AsyncStorage.getItem('userToken').then(userToken => {
       setToken(userToken);
@@ -48,13 +48,21 @@ export default Favorites = () => {
     dispatch(getAllFavoritesRequest({}));
   }, [success_favorite, all_favorites, refresh]);
 
+  useEffect(() => {
+    setAllData(all_favorites)
+  }, [all_favorites])
+
   const onRefresh = useCallback(() => {
     dispatch(clearPagination());
     if (!loading && refresh) {
       dispatch(getAllFavoritesRequest({}));
     }
   }, []);
-
+  const deleteProduct = (index) =>{
+    let item = [...allData]
+    item.splice(index,1)
+    setAllData(item)
+  }
   const renderItem = ({item, index}) => {
     return (
       <FavoriteRenders
@@ -71,6 +79,7 @@ export default Favorites = () => {
           })
         }
         onPress={() => {
+          deleteProduct(index)
           if (token) {
             dispatch(addFavoriteRequest(item?.get_product?.id));
           } else {
@@ -89,7 +98,7 @@ export default Favorites = () => {
       bottomLine={true}
       goBack={() => navigation.goBack()}>
       <FlatList
-        data={all_favorites}
+        data={allData}
         renderItem={renderItem}
         keyExtractor={(_, index) => index.toString()}
         // ListFooterComponent={loading ? <ActivityIndicator size={50} /> : null}
@@ -97,7 +106,7 @@ export default Favorites = () => {
           <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
         }
         ListEmptyComponent={() => {
-          if (all_favorites.length == 0) {
+          if (allData.length == 0 && !refresh) {
             return (
               <View style={styles.emptyParent}>
                 <Text style={styles.emptyText}>Нет продуктов</Text>

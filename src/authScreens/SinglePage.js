@@ -132,7 +132,7 @@ export default SinglePage = ({ route }) => {
             if (token) {
               dispatch(addBasketRequest(route.params.parameter));
             } else {
-              navigation.navigate("LoginOrRegister");
+              navigation.navigate("BegsStack");
             }
           }} />
         </View>

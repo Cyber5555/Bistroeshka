@@ -1,34 +1,39 @@
-import React, { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { TextColor } from "../colors/colors";
-import { ChangeCount } from "./../buttons/changeCount";
-import { DelateToBeg } from "../icons/includeSvg";
-import { API_URL } from "@env";
-import { useDispatch } from "react-redux";
-import { delateInBassketRequest } from "../../store/authReducer/delateInBassketSlice";
-import { plusMinusBasketRequest } from "../../store/authReducer/plusMinusBasketSlice";
-import { getBasketPriceCountRequest } from "../../store/authReducer/getBasketPriceCountSlice";
+import React, {useEffect, useState} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {TextColor} from '../colors/colors';
+import {ChangeCount} from './../buttons/changeCount';
+import {DelateToBeg} from '../icons/includeSvg';
+import {API_URL} from '@env';
+import {useDispatch} from 'react-redux';
+import {delateInBassketRequest} from '../../store/authReducer/delateInBassketSlice';
+import {plusMinusBasketRequest} from '../../store/authReducer/plusMinusBasketSlice';
+import {getBasketPriceCountRequest} from '../../store/authReducer/getBasketPriceCountSlice';
 
 export const BegRenderedItems = ({
-                                   image,
-                                   title,
-                                   price,
-                                   gram,
-                                   info,
-                                   navigation,
-                                   product_count,
-                                   delate,
-                                   setCountMinus,
-                                   setCountPlus,
-                                   product_id,
-                                   token,
-                                 }) => {
+  image,
+  title,
+  price,
+  gram,
+  info,
+  navigation,
+  product_count,
+  delate,
+  setCountMinus,
+  setCountPlus,
+  product_id,
+  token,
+  getProductsPrice,
+}) => {
   const [count, setCount] = useState(Number(product_count));
+  useEffect(()=>{
+    setCount(Number(product_count))
+    console.log(product_count,'product_count')
+  },[product_count])
   const dispatch = useDispatch();
   return (
     <TouchableOpacity style={styles.parent} onPress={navigation}>
       <Image
-        source={{ uri: `${API_URL}/uploads/${image}` }}
+        source={{uri: `${API_URL}/uploads/${image}`}}
         style={styles.image}
       />
       <View style={styles.boxesParent}>
@@ -45,38 +50,34 @@ export const BegRenderedItems = ({
         <View style={styles.buttonParent}>
           <ChangeCount
             height={30}
-            width={"80%"}
+            width={'80%'}
             count={count}
             setCountPlus={() => {
               dispatch(
                 plusMinusBasketRequest({
-                  mat_method: "+",
+                  mat_method: '+',
                   product_id: product_id,
                 }),
-              ).then(res => {
-                if (res.payload?.status)
-                  dispatch(getBasketPriceCountRequest(token));
-              });
+              )
               setCount(count + 1);
+              getProductsPrice('+', price, product_id);
             }}
             setCountMinus={() => {
               if (count > 1) {
                 setCount(count - 1);
                 dispatch(
                   plusMinusBasketRequest({
-                    mat_method: "-",
+                    mat_method: '-',
                     product_id: product_id,
                   }),
-                ).then(res => {
-                  if (res.payload?.status)
-                    dispatch(getBasketPriceCountRequest(token));
-                });
+                  getProductsPrice('-', price,product_id),
+                )
               } else {
                 dispatch(delateInBassketRequest(product_id));
               }
             }}
           />
-          <TouchableOpacity onPress={delate}>
+          <TouchableOpacity onPress={()=>delate(count)}>
             <DelateToBeg />
           </TouchableOpacity>
         </View>
@@ -86,8 +87,8 @@ export const BegRenderedItems = ({
 };
 const styles = StyleSheet.create({
   parent: {
-    width: "100%",
-    flexDirection: "row",
+    width: '100%',
+    flexDirection: 'row',
     columnGap: 10,
     marginVertical: 12,
   },
@@ -98,44 +99,44 @@ const styles = StyleSheet.create({
   },
   boxesParent: {
     flex: 1,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   priceNameParent: {
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
-    fontFamily: "OpenSans-SemiBold",
+    fontFamily: 'OpenSans-SemiBold',
     color: TextColor,
     fontSize: 14,
   },
   priceGramParent: {
-    flexDirection: "row",
+    flexDirection: 'row',
     columnGap: 5,
-    alignItems: "center",
+    alignItems: 'center',
   },
   price: {
-    fontFamily: "OpenSans-SemiBold",
+    fontFamily: 'OpenSans-SemiBold',
     color: TextColor,
     fontSize: 13,
   },
   gram: {
     fontSize: 13,
-    color: "#868686",
-    fontFamily: "OpenSans-Regular",
+    color: '#868686',
+    fontFamily: 'OpenSans-Regular',
   },
   info: {
-    color: "#545454",
+    color: '#545454',
     fontSize: 14,
     marginVertical: 2,
   },
   buttonParent: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
 
     marginTop: 5,
   },

@@ -99,6 +99,7 @@ export default Catalog = () => {
   };
 
   useEffect(() => {
+
     callBackFunction();
   }, [category_data, loading_category, all_product_data, current_page]);
 
@@ -209,7 +210,7 @@ export default Catalog = () => {
           if (token) {
             toggleBasket(item, index);
           } else {
-            navigation.navigate("LoginOrRegister");
+            navigation.navigate("BegsStack");
           }
         }}
         addFavorite={() => {
@@ -227,7 +228,7 @@ export default Catalog = () => {
         image={item?.get_product_image[0]?.image}
         title={item?.title}
         price={item?.price}
-        gram={item?.dimension}
+        gram={item.dimension == 'undefined' ||item.dimension == null ? '' :item.dimension}
         info={item?.description}
       />
     );
@@ -361,7 +362,7 @@ export default Catalog = () => {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.1}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={loading ? <ActivityIndicator size={50} /> : null}
+        ListFooterComponent={loading ? <ActivityIndicator color={'#BF8838'} size={50} /> : null}
         refreshControl={
           <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
         }
